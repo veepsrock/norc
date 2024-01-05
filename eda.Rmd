@@ -1,8 +1,17 @@
+---
+title: "Food Security Survey Analysis EDA"
+output: html_document
+date: "2024-01-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
 library(tidyverse)
 library(haven)
 library(janitor)
-library(expss)
-
+library(knitr)
 
 # Read in data -------------------------------------------------------------------
 
@@ -20,31 +29,6 @@ df <- df |> mutate(hh3 = case_when(q1a <3 ~ 1),
                    ad3 = case_when(q6 == 1 ~ 1)) |>
            rowwise() |>
            mutate(score = sum(c(hh3, hh4, ad1, ad1a, ad2, ad3), na.rm = T))
-
-# Get breakdown of scores
-df |> count(score)
-
-
-
-# Double check breakdown is accurately calculated ----------------------------------------------------
-
-# Getting total values for affirmative 'yes' in original df
-sum_df <- df |>
-  summarise(
-    q1a = sum(q1a < 3, na.rm = T),
-    q1b = sum(q1b < 3, na.rm = T),
-    q3 = sum(q3 == 1, na.rm = T),
-    q4 = sum(q4 < 3, na.rm = T),
-    q5 = sum(q5 == 1, na.rm = T),
-    q6 = sum(q6 ==1, na.rm = T)
-  ) |>
-  summarise_all(sum)
-
-# Getting total values for affirmative 'yes' in calculated values
-scores_df <- df |> 
-  select(hh3, hh4, ad1, ad1a, ad2, ad3) |>
-  summarise_all(sum, na.rm = T) |>
-  summarise_all(sum)
 
 # Calculate food security status
 df <- df |> mutate(
@@ -73,22 +57,44 @@ df <- df |> mutate(
                          )
 )
 
-# Get demographic breakdown -----------------------------------------------------------
 
+```
+
+
+## Calculating Food Security Scores According to the FDA
+
+#### Food security status is assigned as follows:
+
+- Raw score 0-1—High or marginal food security (raw score 1 may be considered marginal food security, but a large proportion of households that would be measured as having marginal food security using the household or adult scale will have raw score zero on the six-item scale)
+
+- Raw score 2-4—Low food security
+
+- Raw score 5-6—Very low food security
+
+For some reporting purposes, the food security status of households with raw score 0-1 is described as food secure and the two categories “low food security” and “very low food security” in combination are referred to as food insecure.
+
+```{r food security, echo= FALSE, results='asis',fig.align='left' }
+kable(df |> count(score))
+```
+
+## Age Breakdown of Food Security 
+
+```{r age, echo=FALSE}
 # Age breakdown
 age <- df |> group_by(fs, age4) |> 
   summarise(count = n())  |>
   group_by(age4)|>
   mutate(proportional_count = count / sum(count)) |>
-  select(-count) 
+  select(-count) |>
   pivot_wider(names_from = age4, values_from = proportional_count, values_fill = 0)
-age
 
-# Get demographic breakdown
-# df |> group_by(fs, age4) |> 
-#   summarise(count = n())  |>
-#   pivot_wider(names_from = age4, values_from = count, values_fill = 0)
+kable(age)
 
+```
+
+## Ethnicity Breakdown of Food Security
+
+``` {r asianorigin, echo = FALSE}
 # Asian origin breakdown
 ao <- df |> group_by(fs, asianorigin) |> 
   summarise(count = n())|> 
@@ -96,13 +102,19 @@ ao <- df |> group_by(fs, asianorigin) |>
   mutate(proportional_count = count / sum(count)) |>
   select(-count) 
 
+kable(ao |>
+  pivot_wider(names_from = asianorigin, values_from = proportional_count, values_fill = 0))
+
 ggplot(ao, aes(x=asianorigin, y = proportional_count, fill = fs)) + 
-  geom_bar(stat="identity", show.legend=F) + coord_flip()+
+  geom_bar(stat="identity", show.legend=F) + coord_flip() + 
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) + 
   facet_wrap(~fs, scales = "free_y")
 
-# vietnamese
-viet <- df |> filter(asianorigin == "Vietnamese")
+```
 
+## Age Breakdown for Demographic Group
+
+```{r, echo = FALSE}
 demo_fx <- function(demo) {
   df <- df |> filter(asianorigin == demo) |> group_by(fs, age4) |> 
   summarise(count = n())  |>
@@ -114,7 +126,6 @@ demo_fx <- function(demo) {
   kable(df, caption = demo)
 }
 
-demo_fx("NHPI")
-lapply(demo_fx(unique(df$asianorigin)))
-
 lapply(unique(df$asianorigin), demo_fx)
+
+```
