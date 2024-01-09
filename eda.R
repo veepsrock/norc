@@ -2,12 +2,13 @@ library(tidyverse)
 library(haven)
 library(janitor)
 library(expss)
+library(survey)
 
 
 # Read in data -------------------------------------------------------------------
 
 df <- read_sav("data/nov/[9800] Amplify AAPI M3 November 2023 - Final Data.sav") |> clean_names()
-
+unique(df$coo)
  
 # Coding food security status ----------------------------------------------------
 
@@ -23,7 +24,6 @@ df <- df |> mutate(hh3 = case_when(q1a <3 ~ 1),
 
 # Get breakdown of scores
 df |> count(score)
-
 
 
 # Double check breakdown is accurately calculated ----------------------------------------------------
@@ -70,9 +70,29 @@ df <- df |> mutate(
                          asianorigin ==8 ~ "Other singular AAPI",
                          asianorigin ==9 ~ "Multiple AAPI"
                          
-                         )
+                         ),
+ coo = case_when(coo == 1 ~ "In the US",
+                 coo == 2 ~ "Outside the US",
+                 coo > 2 ~ "Don't know/Skipped/Refused"                 
+                 )
 )
 
+
+# Create survey object
+svy <- svydesign(ids=~1, weights = ~weight, data = df)
+
+
+ao_svy <- svyby(~fs, by = ~asianorigin, design = svy, FUN = svytotal) |> as_tibble()
+
+ao_svy
+
+svyby(~fs, by = ~asianorigin, denominator = ~asianorigin, design = svy, FUN = svyratio) 
+
+df |> group_by(fs, asianorigin) |> 
+  summarise(count = n())|> 
+  group_by(asianorigin)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count)
 # Get demographic breakdown -----------------------------------------------------------
 
 # Age breakdown
@@ -84,10 +104,6 @@ age <- df |> group_by(fs, age4) |>
   pivot_wider(names_from = age4, values_from = proportional_count, values_fill = 0)
 age
 
-# Get demographic breakdown
-# df |> group_by(fs, age4) |> 
-#   summarise(count = n())  |>
-#   pivot_wider(names_from = age4, values_from = count, values_fill = 0)
 
 # Asian origin breakdown
 ao <- df |> group_by(fs, asianorigin) |> 
@@ -100,9 +116,17 @@ ggplot(ao, aes(x=asianorigin, y = proportional_count, fill = fs)) +
   geom_bar(stat="identity", show.legend=F) + coord_flip()+
   facet_wrap(~fs, scales = "free_y")
 
-# vietnamese
-viet <- df |> filter(asianorigin == "Vietnamese")
 
+# Country of origin breakdown
+df |> group_by(fs, coo) |> 
+  summarise(count = n())|> 
+  group_by(coo)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = coo, values_from = proportional_count, values_fill = 0)
+age
+
+# Demo and age breakdown
 demo_fx <- function(demo) {
   df <- df |> filter(asianorigin == demo) |> group_by(fs, age4) |> 
   summarise(count = n())  |>
@@ -117,4 +141,4 @@ demo_fx <- function(demo) {
 demo_fx("NHPI")
 lapply(demo_fx(unique(df$asianorigin)))
 
-lapply(unique(df$asianorigin), demo_fx)
+unique(df$coo)

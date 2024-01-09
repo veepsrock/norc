@@ -12,7 +12,7 @@ library(tidyverse)
 library(haven)
 library(janitor)
 library(knitr)
-
+library(survey)
 # Read in data -------------------------------------------------------------------
 
 df <- read_sav("data/nov/[9800] Amplify AAPI M3 November 2023 - Final Data.sav") |> clean_names()
@@ -110,11 +110,19 @@ ggplot(ao, aes(x=asianorigin, y = proportional_count, fill = fs)) +
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) + 
   facet_wrap(~fs, scales = "free_y")
 
+
+svy <- svydesign(ids=~1, weights = ~weight, data = df)
+
+
+ao_svy <- svyby(~fs, by = ~asianorigin, design = svy, FUN = svytotal) |> as_tibble()
+
+kable(ao_svy)
+
 ```
 
 ## Age Breakdown for Demographic Group
 
-```{r, echo = FALSE}
+```{r age and demo, echo = FALSE}
 demo_fx <- function(demo) {
   df <- df |> filter(asianorigin == demo) |> group_by(fs, age4) |> 
   summarise(count = n())  |>
@@ -127,5 +135,20 @@ demo_fx <- function(demo) {
 }
 
 lapply(unique(df$asianorigin), demo_fx)
+
+```
+
+## Country of Origin Breakdown
+```{r coo, echo = FALSE}
+# Country of origin breakdown
+coo <- df |> group_by(fs, coo) |> 
+  summarise(count = n())|> 
+  group_by(coo)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = coo, values_from = proportional_count, values_fill = 0)
+age 
+
+kable(coo)
 
 ```
