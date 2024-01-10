@@ -11,5 +11,11 @@ Themes: Food security, nutrition security, and access to SNAP benefits
 Conducted: December 4, 2023 – December 11, 2023
 Themes: Cultural relationship to food, and awareness of Food is Medicine Program
 
-## Data
+## Description of the Data
 Data for both surveys can be found in the [data](/data) folder
+|Description|November File Name|December File Name|
+|:---|:---|:---|
+|Cross tabs|[9800] Amplify AAPI M3 November 2023 - Banner 1_ Rockefeller - 20240109.xlsx|Amplify AAPI_M4 December 2023 Banner.xlsx|
+|Raw data|[9800] Amplify AAPI M3 November 2023 - Final Data - 20240109.sav|Amplify AAPI_M4 December 2023 Final Data.sav|
+|Code book|[9800] Amplify AAPI M3 November 2023 - Codebook.xlsx|Amplify AAPI_M4 December 2023 Codebook.xlsx|
+
