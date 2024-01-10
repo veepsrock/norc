@@ -54,7 +54,11 @@ df <- df |> mutate(
                          asianorigin ==8 ~ "Other singular AAPI",
                          asianorigin ==9 ~ "Multiple AAPI"
                          
-                         )
+                         ),
+  coo = case_when(coo == 1 ~ "In the US",
+                  coo == 2 ~ "Outside the US",
+                  coo > 2 ~ "Don't know/Skipped/Refused"                 
+  )
 )
 
 
@@ -147,17 +151,20 @@ coo <- df |> group_by(fs, coo) |>
   mutate(proportional_count = count / sum(count)) |>
   select(-count) |>
   pivot_wider(names_from = coo, values_from = proportional_count, values_fill = 0)
-age 
-
 kable(coo)
 
 ```
 
 ## Nutrition Security
+Calculating low nutrition security for those who answered "somewhat hard", "hard", or "very hard" to question 1 in the nutrition screener.
+
 ```{r nutrition security, echo = FALSE}
 df <- df |> mutate(
   ns = case_when(score <4 ~ "low",
                  score > 3 ~ "high")
 )
 
+kable(df |> count(ns))
 ```
+### Of those who face low food security, 60% also face low nutrition security
+

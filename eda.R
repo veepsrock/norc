@@ -48,8 +48,8 @@ df <- df |> mutate(hh3 = case_when(q1a <3 ~ 1),
                    ad1a = case_when(q4 <3 ~ 1),
                    ad2 = case_when(q5 == 1 ~ 1),
                    ad3 = case_when(q6 == 1 ~ 1)) |>
-           rowwise() |>
-           mutate(score = sum(c(hh3, hh4, ad1, ad1a, ad2, ad3), na.rm = T))
+  rowwise() |>
+  mutate(score = sum(c(hh3, hh4, ad1, ad1a, ad2, ad3), na.rm = T))
 
 # Calculate food security status
 df <- df |> mutate(
@@ -66,7 +66,17 @@ df <- df |> mutate(
                  q7 == 5 ~ "high")
 )
 
-df |> count(ns)
+# Intersection of food and nutrition security -----------------------------
+
+df |> filter(fs == "low") |> count(ns)
+
+df |> group_by(fs, ns) |> 
+  summarise(count = n())|> 
+  group_by(fs)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = fs, values_from = proportional_count, values_fill = 0)
+
 
 # Create survey object ----------------------------------------------------
 svy <- svydesign(ids=~1, weights = ~weight, data = df)
@@ -114,7 +124,7 @@ df |> group_by(fs, coo) |>
   mutate(proportional_count = count / sum(count)) |>
   select(-count) |>
   pivot_wider(names_from = coo, values_from = proportional_count, values_fill = 0)
-age
+
 
 # Demo and age breakdown
 demo_fx <- function(demo) {
