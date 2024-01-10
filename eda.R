@@ -7,8 +7,8 @@ library(survey)
 
 # Read in data -------------------------------------------------------------------
 
-df <- read_sav("data/nov/[9800] Amplify AAPI M3 November 2023 - Final Data.sav") |> clean_names()
-unique(df$coo)
+df <- read_sav("data/nov/[9800] Amplify AAPI M3 November 2023 - Final Data - 20240109.sav") |> clean_names()
+
  
 # Coding food security status ----------------------------------------------------
 
