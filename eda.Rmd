@@ -152,3 +152,12 @@ age
 kable(coo)
 
 ```
+
+## Nutrition Security
+```{r nutrition security, echo = FALSE}
+df <- df |> mutate(
+  ns = case_when(score <4 ~ "low",
+                 score > 3 ~ "high")
+)
+
+```
