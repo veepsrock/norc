@@ -31,8 +31,8 @@ Here are the variables for food and nutrition security. Food security is calcula
 
 |Variable|Values|Description|
 |:---|:---|:---|
-|fs|"low" or "high"|Food seucirty status|
-|ns|"low" or "high"|Nutrition seucirty status|
+|fs|"low" or "high"|Food security status|
+|ns|"low" or "high"|Nutrition security status|
 |low_fs|0 or 1|Experiencing low food security (1 = yes)|
 |low_ns|0 or 1|Experiencing low nutrition security (1 = yes)|
 
