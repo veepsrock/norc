@@ -8,7 +8,11 @@ library(survey)
 # Read in data -------------------------------------------------------------------
 
 df <- read_sav("data/nov/[9800] Amplify AAPI M3 November 2023 - Final Data - 20240109.sav") |> clean_names()
+colnames(df)
 
+df |> count(state) |> sort()
+
+unique(df$age7)
 
 # Recode demographic values -------------------------------------------------------------------
 df <- df |> mutate(
@@ -77,6 +81,14 @@ df |> group_by(fs, ns) |>
   select(-count) |>
   pivot_wider(names_from = fs, values_from = proportional_count, values_fill = 0)
 
+df <- df |>
+  mutate(low_fs = case_when(fs == "low" ~ 1,
+                            fs == "high" ~ 0),
+         low_ns = case_when(ns == "low" ~ 1,
+                            ns == "high" ~ 0))
+
+lm(low_fs ~ low_ns, data = df)
+cor(df$low_fs, df$low_ns)
 
 # Create survey object ----------------------------------------------------
 svy <- svydesign(ids=~1, weights = ~weight, data = df)

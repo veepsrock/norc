@@ -13,6 +13,7 @@ library(haven)
 library(janitor)
 library(knitr)
 library(survey)
+library(scales)
 # Read in data -------------------------------------------------------------------
 
 source("002_recode.R")
@@ -34,8 +35,15 @@ source("002_recode.R")
 For some reporting purposes, the food security status of households with raw score 0-1 is described as food secure and the two categories “low food security” and “very low food security” in combination are referred to as food insecure.
 
 ```{r food security, echo= FALSE, results='asis',fig.align='left' }
-kable(df |> count(score))
+low_fs <- sum(df$fs == "low")/nrow(df)
+low_ns <- sum(df$ns == "low", na.rm = T)/nrow(df)
+low_fsns <- {df |> filter(fs == "low" & ns == "low") |> nrow()}/sum(df$fs == "low")
+
+
 ```
+### `r percent(low_fs)` of the AANHPI population face low food security and `r percent(low_ns)` face low nutrition security.
+### Of those who face low food security, `r percent(low_fsns)` also face low nutrition security.
+
 
 ## Age Breakdown of Food Security 
 
@@ -74,7 +82,7 @@ ggplot(ao, aes(x=asianorigin, y = proportional_count, fill = fs)) +
 svy <- svydesign(ids=~1, weights = ~weight, data = df)
 
 
-ao_svy <- svyby(~fs, by = ~asianorigin, design = svy, FUN = svytotal) |> as_tibble()
+ao_svy <- svyby(~fs, by = ~asianorigin, design = svy, FUN = svymean) |> as_tibble()
 
 kable(ao_svy)
 
@@ -118,5 +126,31 @@ Calculating low nutrition security for those who answered "somewhat hard", "hard
 
 kable(df |> count(ns))
 ```
-### Of those who face low food security, 60% also face low nutrition security
 
+## State Breakdown
+Calculating low nutrition security for those who answered "somewhat hard", "hard", or "very hard" to question 1 in the nutrition screener.
+
+```{r nutrition security by state, echo = FALSE}
+fim_states <- c("AR", "CA", "MA", "NC", "NJ", "NY", "OR", "WA", "DE", "IL", "NM")
+fs_states <- df |> filter(state %in% fim_states) |>
+  group_by(fs, state) |> 
+  summarise(count = n())  |>
+  group_by(state)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = state, values_from = proportional_count, values_fill = 0)
+
+
+ns_states <- df |> filter(state %in% fim_states) |>
+  group_by(ns, state) |> 
+  summarise(count = n())  |>
+  group_by(state)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = state, values_from = proportional_count, values_fill = 0)
+
+
+kable(fs_states)
+kable(ns_states)
+
+```
