@@ -1,0 +1,156 @@
+---
+title: "Food Security Survey Analysis EDA"
+output: html_document
+date: "2024-01-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+library(tidyverse)
+library(haven)
+library(janitor)
+library(knitr)
+library(survey)
+library(scales)
+# Read in data -------------------------------------------------------------------
+
+source("002_recode.R")
+
+
+```
+
+
+## Calculating Food Security Scores According to the FDA
+
+#### Food security status is assigned as follows:
+
+- Raw score 0-1—High or marginal food security (raw score 1 may be considered marginal food security, but a large proportion of households that would be measured as having marginal food security using the household or adult scale will have raw score zero on the six-item scale)
+
+- Raw score 2-4—Low food security
+
+- Raw score 5-6—Very low food security
+
+For some reporting purposes, the food security status of households with raw score 0-1 is described as food secure and the two categories “low food security” and “very low food security” in combination are referred to as food insecure.
+
+```{r food security, echo= FALSE, results='asis',fig.align='left' }
+low_fs <- sum(df$fs == "low")/nrow(df)
+low_ns <- sum(df$ns == "low", na.rm = T)/nrow(df)
+low_fsns <- {df |> filter(fs == "low" & ns == "low") |> nrow()}/sum(df$fs == "low")
+
+
+```
+### `r percent(low_fs)` of the AANHPI population face low food security and `r percent(low_ns)` face low nutrition security.
+### Of those who face low food security, `r percent(low_fsns)` also face low nutrition security.
+
+
+## Age Breakdown of Food Security 
+
+```{r age, echo=FALSE}
+# Age breakdown
+age <- df |> group_by(fs, age4) |> 
+  summarise(count = n())  |>
+  group_by(age4)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = age4, values_from = proportional_count, values_fill = 0)
+
+kable(age)
+
+```
+
+## Ethnicity Breakdown of Food Security
+
+``` {r asianorigin, echo = FALSE}
+# Asian origin breakdown
+ao <- df |> group_by(fs, asianorigin) |> 
+  summarise(count = n())|> 
+  group_by(asianorigin)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) 
+
+kable(ao |>
+  pivot_wider(names_from = asianorigin, values_from = proportional_count, values_fill = 0))
+
+ggplot(ao, aes(x=asianorigin, y = proportional_count, fill = fs)) + 
+  geom_bar(stat="identity", show.legend=F) + coord_flip() + 
+  scale_fill_manual(values = c('#00BFC4', '#F8766D')) + 
+  facet_wrap(~fs, scales = "free_y")
+
+
+svy <- svydesign(ids=~1, weights = ~weight, data = df)
+
+
+ao_svy <- svyby(~fs, by = ~asianorigin, design = svy, FUN = svymean) |> as_tibble()
+
+kable(ao_svy)
+
+```
+
+## Age Breakdown for Demographic Group
+
+```{r age and demo, echo = FALSE}
+demo_fx <- function(demo) {
+  df <- df |> filter(asianorigin == demo) |> group_by(fs, age4) |> 
+  summarise(count = n())  |>
+  group_by(age4)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = age4, values_from = proportional_count, values_fill = 0)
+  
+  kable(df, caption = demo)
+}
+
+lapply(unique(df$asianorigin), demo_fx)
+
+```
+
+## Country of Origin Breakdown
+```{r coo, echo = FALSE}
+# Country of origin breakdown
+coo <- df |> group_by(fs, coo) |> 
+  summarise(count = n())|> 
+  group_by(coo)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = coo, values_from = proportional_count, values_fill = 0)
+kable(coo)
+
+```
+
+## Nutrition Security
+Calculating low nutrition security for those who answered "somewhat hard", "hard", or "very hard" to question 1 in the nutrition screener.
+
+```{r nutrition security, echo = FALSE}
+
+kable(df |> count(ns))
+```
+
+## State Breakdown
+Calculating low nutrition security for those who answered "somewhat hard", "hard", or "very hard" to question 1 in the nutrition screener.
+
+```{r nutrition security by state, echo = FALSE}
+fim_states <- c("AR", "CA", "MA", "NC", "NJ", "NY", "OR", "WA", "DE", "IL", "NM")
+fs_states <- df |> filter(state %in% fim_states) |>
+  group_by(fs, state) |> 
+  summarise(count = n())  |>
+  group_by(state)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = state, values_from = proportional_count, values_fill = 0)
+
+
+ns_states <- df |> filter(state %in% fim_states) |>
+  group_by(ns, state) |> 
+  summarise(count = n())  |>
+  group_by(state)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) |>
+  pivot_wider(names_from = state, values_from = proportional_count, values_fill = 0)
+
+
+kable(fs_states)
+kable(ns_states)
+
+```
