@@ -39,6 +39,17 @@ low_fs <- sum(df$fs == "low")/nrow(df)
 low_ns <- sum(df$ns == "low", na.rm = T)/nrow(df)
 low_fsns <- {df |> filter(fs == "low" & ns == "low") |> nrow()}/sum(df$fs == "low")
 
+na_table <- df |>  summarise(across(c(q1a, q1b, q3, q4, q5, q6), ~sum(. > 97, na.rm = TRUE), .names = "total_{.col}")) %>%
+  pivot_longer(cols = starts_with("total_"), names_to = "column", values_to = "count")
+
+
+na_table <- df |> 
+  summarise(across(c(q1a, q1b, q3, q4, q5, q6, q7), ~sum(. > 97, na.rm = TRUE))) |>
+  summarize_all(~sum(.))
+
+print("Total NA or Skipped values for each of the food/nutrition security questions")
+kable(na_table)
+
 
 ```
 ### `r percent(low_fs)` of the AANHPI population face low food security and `r percent(low_ns)` face low nutrition security.
