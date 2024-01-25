@@ -55,6 +55,29 @@ kable(na_table)
 ### `r percent(low_fs)` of the AANHPI population face low food security and `r percent(low_ns)` face low nutrition security.
 ### Of those who face low food security, `r percent(low_fsns)` also face low nutrition security.
 
+## Chi Square evaluation for demographic categories
+
+``` {r chi square, echo = FALSE}
+
+demo_list <- c("asianorigin", "age4", "income4", "region4", "coo")
+
+chisq_fx <- function(demo){
+
+    chisq <- chisq.test(table(df[[demo]], df[["fs"]]))
+    sig <- if_else(chisq$p.value <0.05, "a significant", "not a significant")
+    print(chisq)
+    print(paste("There is", sig, "result between", demo, "and food security"))
+}
+
+
+invisible(lapply(demo_list, chisq_fx))
+
+#library(corrplot)
+#round(chisq$residuals, 3)
+#corrplot(chisq$residuals, is.cor = FALSE)
+
+```
+
 
 ## Age Breakdown of Food Security 
 
@@ -72,6 +95,7 @@ kable(age)
 ```
 
 ## Ethnicity Breakdown of Food Security
+
 
 ``` {r asianorigin, echo = FALSE}
 # Asian origin breakdown
