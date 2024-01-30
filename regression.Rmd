@@ -22,14 +22,16 @@ library(jtools)
 
 ## Comparing Income
 
-We use Income as a Reference category (people making between 60K-100K) and want to compare the odds ratio of the other categories
+We use Income as a Reference category (people making between 60K-100K) and want to compare the odds ratio of the other categories. 
+
+Those with income under 30K are 3 times as likely to have less food security
 
 ```{r income reference}
 glm <- glm(low_fs ~ relevel(factor(income4), ref = 3), data = df, family = "binomial")
 #stargazer(glm, type = "text", title = "Income Reference")
 summ(glm, confint = TRUE, digits = 3, exp = TRUE)
 ```
-## Regression Analysis 
+## Regression Analysis for low_fs
 
 ### Q8A
 
@@ -51,7 +53,7 @@ summ(logit_model1, confint = TRUE, digits = 3, exp = TRUE)
 
 ### Q8B 
 
-#### Question content
+#### There aren't a lot of healthy food choices at the stores where I usually shop 
 
 ```{r logit2, results='asis'}
 logit_model2 <- glm(low_fs ~ q8b + age + income, data = df, family = "binomial")
@@ -64,7 +66,7 @@ summ(logit_model2, confint = TRUE, digits = 3, exp = TRUE)
 
 ### Q8C
 
-#### Question content
+#### Stores or food pantries with healthy foods are too far away or hard to reach 
 
 ```{r logit3, results='asis'}
 logit_model3 <- glm(low_fs ~ q8c + age + income, data = df, family = "binomial")
@@ -76,7 +78,204 @@ summ(logit_model3, confint = TRUE, digits = 3, exp = TRUE)
 
 ### Q8d
 
+#### I don't have a car or other transportation to reach stores or food pantries that have healthy foods 
+
+```{r logit4, results='asis'}
+logit_model4 <- glm(low_fs ~ q8d + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model4, confint = TRUE, digits = 3, exp = TRUE)
+```
+#### Conclusion 
+
+### Q8e
+
+#### I don't have enough time to shope for healthy foods 
+
+```{r logit5, results='asis'}
+logit_model5 <- glm(low_fs ~ q8e + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model5, confint = TRUE, digits = 3, exp = TRUE)
+```
+#### Conclusion 
+
+### Q8f
+
+#### I don't have enough time to cook healthy foods
+
+```{r logit6, results='asis'}
+logit_model6 <- glm(low_fs ~ q8f + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model6, confint = TRUE, digits = 3, exp = TRUE)
+```
+#### Conclusion
+
+### Q8g
+
+#### My cooking equipment or storage space is not enough to prepapre healthy foods 
+
+```{r logit7, results='asis'}
+logit_model7 <- glm(low_fs ~ q8g + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model7, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion:
+
+### Q8h
+
 #### Question content
+
+```{r logit8, results='asis'}
+logit_model8 <- glm(low_fs ~ q8h + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model8, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion: 
+
+### Q8i
+
+#### Question Content
+
+```{r logit9, results='asis'}
+logit_model9 <- glm(low_fs ~ q8i + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model9, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion
+
+### Q8j
+
+#### Question Content
+
+```{r logit10, results='asis'}
+logit_model10 <- glm(low_fs ~ q8j + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model10, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion 
+
+### Q8k
+
+#### Question Content
+
+```{r logit11, results='asis'}
+logit_model11 <- glm(low_fs ~ q8k + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model11, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion 
+
+### Q8l
+
+#### Question Content
+
+```{r logit12, results='asis'}
+logit_model12 <- glm(low_fs ~ q8l + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model12, confint = TRUE, digits = 3, exp = TRUE)
+```
+#### Conclusion 
+
+### Q8m
+
+#### Question Content
+
+```{r logit13, results='asis'}
+logit_model13 <- glm(low_fs ~ q8m + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model13, confint = TRUE, digits = 3, exp = TRUE)
+``` 
+
+#### Conclusion 
+
+### Q9
+
+#### Question Content
+
+```{r logit14, results='asis'}
+logit_model14 <- glm(low_fs ~ q9 + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model14, confint = TRUE, digits = 3, exp = TRUE)
+``` 
+
+#### Conclusion
+
+### Q10
+
+#### Question Content
+
+```{r logit15, results='asis'}
+logit_model15 <- glm(low_fs ~ q10 + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model15, confint = TRUE, digits = 3, exp = TRUE)
+``` 
+
+#### Conclusion
+
+## Regression Analysis for low_ns
+
+### Q8A
+
+#### Healthy foods are too expensive (often/sometimes true, never true, etc.)
+
+```{r logit16, results='asis'}
+logit_model16 <- glm(low_ns ~ q8a + age + income4, data = df, family = "binomial")
+#stargazer(logit_model1, type = "text", title = "Logistic Regression Summary")
+
+#ggplot(df2, aes(x = age, y = low_fs)) +
+  #geom_point() +
+  #stat_smooth(method = "glm", family = "binomial", se = FALSE, color = "blue") +
+  #labs(title = "Logistic Regression", x = "Independent Variable", y = "Binary Dependent Variable")
+
+summ(logit_model16, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion:  
+
+### Q8B 
+
+#### There aren't a lot of healthy food choices at the stores where I usually shop 
+
+```{r logit2, results='asis'}
+logit_model2 <- glm(low_fs ~ q8b + age + income, data = df, family = "binomial")
+#stargazer(logit_model2, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model2, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion: 
+
+### Q8C
+
+#### Stores or food pantries with healthy foods are too far away or hard to reach 
+
+```{r logit3, results='asis'}
+logit_model3 <- glm(low_fs ~ q8c + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model3, confint = TRUE, digits = 3, exp = TRUE)
+```
+#### Conclusion:
+
+### Q8d
+
+#### I don't have a car or other transportation to reach stores or food pantries that have healthy foods 
 
 ```{r logit3, results='asis'}
 logit_model4 <- glm(low_fs ~ q8d + age + income, data = df, family = "binomial")
@@ -88,7 +287,7 @@ summ(logit_model4, confint = TRUE, digits = 3, exp = TRUE)
 
 ### Q8e
 
-#### Question content
+#### I don't have enough time to shope for healthy foods 
 
 ```{r logit3, results='asis'}
 logit_model5 <- glm(low_fs ~ q8e + age + income, data = df, family = "binomial")
@@ -100,7 +299,7 @@ summ(logit_model5, confint = TRUE, digits = 3, exp = TRUE)
 
 ### Q8f
 
-#### Question content
+#### I don't have enough time to cook healthy foods
 
 ```{r logit3, results='asis'}
 logit_model6 <- glm(low_fs ~ q8f + age + income, data = df, family = "binomial")
@@ -112,7 +311,7 @@ summ(logit_model6, confint = TRUE, digits = 3, exp = TRUE)
 
 ### Q8g
 
-#### Question content
+#### My cooking equipment or storage space is not enough to prepapre healthy foods 
 
 ```{r logit3, results='asis'}
 logit_model7 <- glm(low_fs ~ q8g + age + income, data = df, family = "binomial")
@@ -148,3 +347,55 @@ summ(logit_model9, confint = TRUE, digits = 3, exp = TRUE)
 ```
 
 #### Conclusion
+
+### Q8j
+
+#### Question Content
+
+```{r logit3, results='asis'}
+logit_model10 <- glm(low_fs ~ q8j + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model10, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion 
+
+### Q8k
+
+#### Question Content
+
+```{r logit3, results='asis'}
+logit_model11 <- glm(low_fs ~ q8k + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model11, confint = TRUE, digits = 3, exp = TRUE)
+```
+
+#### Conclusion 
+
+### Q8l
+
+#### Question Content
+
+```{r logit3, results='asis'}
+logit_model12 <- glm(low_fs ~ q8l + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model12, confint = TRUE, digits = 3, exp = TRUE)
+```
+#### Conclusion 
+
+### Q8m
+
+#### Question Content
+
+```{r logit3, results='asis'}
+logit_model13 <- glm(low_fs ~ q8m + age + income, data = df, family = "binomial")
+#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
+
+summ(logit_model13, confint = TRUE, digits = 3, exp = TRUE)
+``` 
+
+#### Conclusion 
+
