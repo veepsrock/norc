@@ -72,7 +72,9 @@ df <- df |>
     income == 17 ~ 199999,
     income == 18 ~ 200000
   ),
-  hh_income = income_bracket/hhsize
+  hh_income = income_bracket/hhsize,
+  hh_income_m = hh_income/12
   )
 
 
+   
