@@ -47,3 +47,32 @@ df <- df |>
          low_ns = case_when(ns == "low" ~ 1,
                             ns == "high" ~ 0))
 
+
+
+# Calculating household income brackets  -----------------------------
+
+df <- df |>
+  mutate(income_bracket = case_when(
+    income == 1 ~ 5000,
+    income == 2 ~ 9999,
+    income == 3 ~ 14999,
+    income == 4 ~ 19999,
+    income == 5 ~ 24999,
+    income == 6 ~ 29999,
+    income == 7 ~ 34999,
+    income == 8 ~ 39999,
+    income == 9 ~ 49999,
+    income == 10 ~ 59999,
+    income == 11 ~ 74999,
+    income == 12 ~ 84999,
+    income == 13 ~ 99999,
+    income == 14 ~ 124999,
+    income == 15 ~ 149999,
+    income == 16 ~ 174999,
+    income == 17 ~ 199999,
+    income == 18 ~ 200000
+  ),
+  hh_income = income_bracket/hhsize
+  )
+
+
