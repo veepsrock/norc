@@ -12,7 +12,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 setwd("/Users/torchi/Documents/GitHub/norc")
 
 source("001_data_processing.R")
-source("002_recode.R")
+#source("002_recode.R")
 
 library(ggplot2)
 library(glmnet)
@@ -31,6 +31,13 @@ glm <- glm(low_fs ~ relevel(factor(income4), ref = 3), data = df, family = "bino
 #stargazer(glm, type = "text", title = "Income Reference")
 summ(glm, confint = TRUE, digits = 3, exp = TRUE)
 ```
+
+```{r age reference}
+glm <- glm(low_fs ~ relevel(factor(age4), ref = 1) + income4, data = df, family = "binomial")
+#stargazer(glm, type = "text", title = "Income Reference")
+summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+```
+
 ## Regression Analysis for low_fs
 
 ### Q8A
