@@ -26,7 +26,7 @@ svy <- svydesign(ids=~1, weights = ~weight, data = df)
 
 
 # create list of demo 
-demo_list <- c("asianorigin_l", "income4_l", "region4_l", "snap", "internet_l", "metro_l", "lang_athome_l")
+demo_list <- c("asianorigin_l", "income4_l", "region4_l", "snap", "internet_l", "lang_athome_l", "age4_l")
 
 # create a list of independent variables
 ind_vars <- c("fs", "ns")
@@ -36,6 +36,10 @@ ui <- fluidPage(
 
     # Application title
     titlePanel("Relationship between demographic group and food security"),
+    titlePanel(h3("22% of the AANHPI population face low food security and 20% face low nutrition security.")),
+    titlePanel(h3("Of those who face low food security, 60% also face low nutrition security.")),
+    p("There is a significant result between food security and asian origin, income, region, SNAP access, and language at home."),
+    p("There is a significant result between nutrition security and asian origin, income, SNAP access, language at home, and age."),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
