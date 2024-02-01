@@ -33,7 +33,8 @@ df <- df |> mutate(
 df <- df |> mutate(
   ns = case_when(q7 <4 ~ "low",
                  q7 == 4 ~ "high",
-                 q7 == 5 ~ "high")
+                 q7 == 5 ~ "high",
+                 q7 > 76 ~ "DK/Skipped/Refused")
 )
 
 
@@ -53,7 +54,7 @@ df <- df |>
 
 df <- df |>
   mutate(income_bracket = case_when(
-    income == 1 ~ 5000,
+    income == 1 ~ 4999,
     income == 2 ~ 9999,
     income == 3 ~ 14999,
     income == 4 ~ 19999,
@@ -75,6 +76,3 @@ df <- df |>
   hh_income = income_bracket/hhsize,
   hh_income_m = hh_income/12
   )
-
-
-   

@@ -59,7 +59,7 @@ kable(na_table)
 
 ``` {r chi square, echo = FALSE}
 
-demo_list <- c("asianorigin", "age4", "income4", "region4", "coo")
+demo_list <- c("asianorigin_l", "income4_l", "region4_l", "snap", "internet_l", "metro_l", "lang_athome_l", "age4")
 
 chisq_fx <- function(demo){
 
@@ -83,12 +83,12 @@ invisible(lapply(demo_list, chisq_fx))
 
 ```{r age, echo=FALSE}
 # Age breakdown
-age <- df |> group_by(fs, age4) |> 
+age <- df |> group_by(fs, age4_l) |> 
   summarise(count = n())  |>
-  group_by(age4)|>
+  group_by(age4_l)|>
   mutate(proportional_count = count / sum(count)) |>
   select(-count) |>
-  pivot_wider(names_from = age4, values_from = proportional_count, values_fill = 0)
+  pivot_wider(names_from = age4_l, values_from = proportional_count, values_fill = 0)
 
 kable(age)
 
@@ -97,18 +97,18 @@ kable(age)
 ## Ethnicity Breakdown of Food Security
 
 
-``` {r asianorigin, echo = FALSE}
+``` {r asianorigin_l, echo = FALSE}
 # Asian origin breakdown
-ao <- df |> group_by(fs, asianorigin) |> 
+ao <- df |> group_by(fs, asianorigin_l) |> 
   summarise(count = n())|> 
-  group_by(asianorigin)|>
+  group_by(asianorigin_l)|>
   mutate(proportional_count = count / sum(count)) |>
   select(-count) 
 
 kable(ao |>
-  pivot_wider(names_from = asianorigin, values_from = proportional_count, values_fill = 0))
+  pivot_wider(names_from = asianorigin_l, values_from = proportional_count, values_fill = 0))
 
-ggplot(ao, aes(x=asianorigin, y = proportional_count, fill = fs)) + 
+ggplot(ao, aes(x=asianorigin_l, y = proportional_count, fill = fs)) + 
   geom_bar(stat="identity", show.legend=F) + coord_flip() + 
   scale_fill_manual(values = c('#00BFC4', '#F8766D')) + 
   facet_wrap(~fs, scales = "free_y")
@@ -117,7 +117,7 @@ ggplot(ao, aes(x=asianorigin, y = proportional_count, fill = fs)) +
 svy <- svydesign(ids=~1, weights = ~weight, data = df)
 
 
-ao_svy <- svyby(~fs, by = ~asianorigin, design = svy, FUN = svymean) |> as_tibble()
+ao_svy <- svyby(~fs, by = ~asianorigin_l, design = svy, FUN = svymean) |> as_tibble()
 
 kable(ao_svy)
 
@@ -127,30 +127,30 @@ kable(ao_svy)
 
 ```{r age and demo, echo = FALSE}
 demo_fx <- function(demo) {
-  df <- df |> filter(asianorigin == demo) |> group_by(fs, age4) |> 
+  df <- df |> filter(asianorigin_l == demo) |> group_by(fs, age4_l) |> 
   summarise(count = n())  |>
-  group_by(age4)|>
+  group_by(age4_l)|>
   mutate(proportional_count = count / sum(count)) |>
   select(-count) |>
-  pivot_wider(names_from = age4, values_from = proportional_count, values_fill = 0)
+  pivot_wider(names_from = age4_l, values_from = proportional_count, values_fill = 0)
   
   kable(df, caption = demo)
 }
 
-lapply(unique(df$asianorigin), demo_fx)
+lapply(unique(df$asianorigin_l), demo_fx)
 
 ```
 
 ## Country of Origin Breakdown
-```{r coo, echo = FALSE}
+```{r coo_l, echo = FALSE}
 # Country of origin breakdown
-coo <- df |> group_by(fs, coo) |> 
+coo_l <- df |> group_by(fs, coo_l) |> 
   summarise(count = n())|> 
-  group_by(coo)|>
+  group_by(coo_l)|>
   mutate(proportional_count = count / sum(count)) |>
   select(-count) |>
-  pivot_wider(names_from = coo, values_from = proportional_count, values_fill = 0)
-kable(coo)
+  pivot_wider(names_from = coo_l, values_from = proportional_count, values_fill = 0)
+kable(coo_l)
 
 ```
 
