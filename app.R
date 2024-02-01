@@ -20,15 +20,6 @@ library(DT)
 
 source("002_recode.R")
 
-# fuction for chisquare
-chisq_fx <- function(demo, ind_var){
-  
-  chisq <- chisq.test(table(df[[demo]], df[[ind_var]]))
-  sig <- if_else(chisq$p.value <0.05, "a significant", "not a significant")
-  print(chisq)
-  print(paste("There is", sig, "result between", demo, "and", ind_var))
-}
-
 # create survey object
 svy <- svydesign(ids=~1, weights = ~weight, data = df)
 
@@ -55,6 +46,7 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
+          textOutput("chi_results"),
           plotOutput("bar_plot"),
           DTOutput("demo_dt")
         )
@@ -63,6 +55,20 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  
+  # Conducting chi square tests --------------------------------------------------
+  
+  # Function for chisquare
+  chisq_fx <- function(demo, ind_var){
+    
+    chisq <- chisq.test(table(df[[input$demo]], df[[input$ind_var]]))
+    sig <- if_else(chisq$p.value <0.05, "a significant", "not a significant")
+    print(chisq)
+    print(paste("There is", sig, "result between", input$demo, "and", input$ind_var))
+  }
+  
+  # Run chi square test
+  output$chi_results <- renderText(print(chisq_fx(input$demo, input$ind_var)))
   
   # Getting raw counts for observerations -----------------------------------------
   
