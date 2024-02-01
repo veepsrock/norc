@@ -11,7 +11,14 @@ RF conducted two nationwide surveys on the Asian American Native Hawaiian Pacifi
 - **Conducted**: December 4, 2023 – December 11, 2023
 - **Themes**: Cultural relationship to food, and awareness of Food is Medicine Program
 
-## Description of the Data
+## Description of the data
+Data for both surveys can be found in the [data](/data) folder
+|Survey month|Themes|Sample size|
+|:---|:---|:---|
+|November|Food security, nutrition security, SNAP access|1115|
+|December|Cultural relationship to food, FIM awareness and perceptions|1091|
+
+## Description of the data files
 Data for both surveys can be found in the [data](/data) folder
 |Description|November File Name|December File Name|
 |:---|:---|:---|
