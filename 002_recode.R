@@ -18,11 +18,16 @@ df <- df |> mutate(
                           asianorigin ==6 ~ "Japanese",
                           asianorigin ==7 ~ "NHPI",
                           asianorigin ==8 ~ "Other singular AAPI",
-                          asianorigin ==9 ~ "Multiple AAPI"
-                          
-  ),
+                          asianorigin ==9 ~ "Multiple AAPI"),
   coo_l = case_when(coo == 1 ~ "In the US",
                   coo == 2 ~ "Outside the US",
-                  coo > 2 ~ "Don't know/Skipped/Refused"                 
-  )
+                  coo > 2 ~ "Don't know/Skipped/Refused"),
+  income4_l = case_when(income4 == 1 ~ "Less than $30,000",
+                        income4 == 2 ~ "$30,000 to under $60,000",
+                        income4 == 3 ~ "$60,000 to under $100,000",
+                        income4 == 4 ~ "100,000 or more"),
+  region4_l = case_when(region4 == 1 ~ "Northeast",
+                       region4 == 2 ~ "Midwest",
+                       region4 == 3 ~ "South",
+                       region4 == 4 ~ "West")
 )
