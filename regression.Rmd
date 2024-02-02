@@ -12,7 +12,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 setwd("/Users/torchi/Documents/GitHub/norc")
 
 source("001_data_processing.R")
-#source("002_recode.R")
+source("002_recode.R")
 
 library(ggplot2)
 library(glmnet)
