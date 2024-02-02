@@ -46,7 +46,10 @@ df <- df |> mutate(
                             lang_athome ==  4 ~"Tagalog",
                             lang_athome ==  5 ~"Vietnamese",
                             lang_athome ==  6 ~"Other Language",
-                            lang_athome > 76 ~ "DK/Skipped/Refused")
+                            lang_athome > 76 ~ "DK/Skipped/Refused"),
+  gender_l = case_when(gender == 0 ~"Unknown",
+                       gender == 1 ~ "Male",
+                       gender == 2 ~ "Female")
 )
 
 
