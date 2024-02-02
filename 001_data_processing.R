@@ -76,3 +76,13 @@ df <- df |>
   hh_income = income_bracket/hhsize,
   hh_income_m = hh_income/12
   )
+
+
+# Relabeling SNAP values  -----------------------------
+df <- df |> 
+  mutate(snap = case_when(q9 == 1 ~ "Enrolled in past",
+                 q9 == 2 ~ "Currently enrolled",
+                 q9 == 3 ~ "Not enrolled",
+                 q9 == 77 ~ "I don't know",
+                 q9 >97 ~ "Skipped/Refused")
+)
