@@ -189,3 +189,25 @@ kable(fs_states)
 kable(ns_states)
 
 ```
+
+## Ethnicity Breakdown of Healthy Food Access
+
+
+``` {r asianorigin_l, echo = FALSE}
+# Asian origin breakdown
+ao_health <- df |> group_by(expensive, asianorigin_l) |> 
+  summarise(count = n())|> 
+  group_by(asianorigin_l)|>
+  mutate(proportional_count = count / sum(count)) |>
+  select(-count) 
+ao_health
+
+#kable(ao |>
+#  pivot_wider(names_from = asianorigin_l, values_from = proportional_count, values_fill = 0))
+
+ao_health_svy <- svyby(~expensive, by = ~asianorigin_l, design = svy, FUN = svymean) |> as_tibble()
+
+kable(ao_health_svy)
+
+```
+
