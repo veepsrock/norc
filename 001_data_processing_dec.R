@@ -11,17 +11,18 @@ df <- read_sav("data/dec/Amplify AAPI_M4 December 2023 Final Data.sav") |> clean
 
 # Write function for recoding likert scale ----------------------------------------
 
+
 likert_fx <- function(new_col_name, org_col){
-  df <- df |> mutate(
-    {{new_col_name}} := case_when(
-      .data[[org_col]] < 3 ~ 1,
-      .data[[org_col]] == 3 ~ 0,
-      .data[[org_col]] == 4 ~ 0,
-      .data[[org_col]] == 5 ~ 0,
-      .data[[org_col]] < 76 ~ NA_real_)
-  )
-  return(df)
+ df <- df |> mutate(
+   {{new_col_name}} := case_when(
+     .data[[org_col]] < 4 ~ 0,
+     .data[[org_col]] == 4 ~ 1,
+     .data[[org_col]] == 5 ~ 1,
+     .data[[org_col]] > 76 ~ 0)
+ )
+ return(df)
 }
+
 
 # Coding cultural food affinity (cfa)  ----------------------------------------------------
 
