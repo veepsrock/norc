@@ -45,13 +45,16 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
           radioButtons("demo", "Select demographic of interest", choices = demo_list),
-          radioButtons("ind_var", "Select independent variable", choices = c("food security" = "fs", "nutrition security" = "ns")),
+          radioButtons("ind_var", "Select independent variable", choices = c("food security" = "fs", "nutrition security" = "ns"))
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
           textOutput("chi_results"),
           plotOutput("bar_plot"),
+          h3("Weighted breakdown by demographic group"),
+          DTOutput("svy_dt"),
+          h3("Count totals"),
           DTOutput("demo_dt")
         )
     )
@@ -67,8 +70,8 @@ server <- function(input, output) {
     
     chisq <- chisq.test(table(df[[input$demo]], df[[input$ind_var]]))
     sig <- if_else(chisq$p.value <0.05, "a significant", "not a significant")
-    print(chisq)
-    print(paste("There is", sig, "result between", input$demo, "and", input$ind_var))
+    #print(chisq)
+    print(paste("There is", sig, "result between", input$demo, "and", input$ind_var, "with a p-value of", format.pval(chisq$p.value, eps=0.0001)))
   }
   
   # Run chi square test
@@ -81,8 +84,10 @@ server <- function(input, output) {
     df |>
     group_by(.data[[ind_var]], .data[[demo]]) |> 
     summarise(count = n())  |>
-    group_by(.data[[demo]])
-   # mutate(proportional_count = count / sum(count)) 
+    group_by(.data[[demo]]) |>
+    filter(.data[[ind_var]] == "low") |>
+    select(-.data[[ind_var]])
+    #pivot_wider(names_from = .data[[demo]], values_from = count)
   }
   
   # create demo table
@@ -118,8 +123,14 @@ server <- function(input, output) {
       geom_bar(stat="identity", show.legend=F) 
   }
   
-  output$bar_plot = renderPlot({
+  # render plot for survey object
+  output$bar_plot <- renderPlot({
     plot_fx(input$demo, input$ind_var)
+  })
+  
+  # render table for survey object
+  output$svy_dt <- renderDT({
+    svy_object() |> mutate(across(where(is.numeric), round, 3))
   })
 }
 
