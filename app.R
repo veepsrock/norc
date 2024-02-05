@@ -45,7 +45,7 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
           radioButtons("demo", "Select demographic of interest", choices = demo_list),
-          radioButtons("ind_var", "Select independent variable", choices = c("food security" = "fs", "nutrition security" = "ns"))
+          radioButtons("ind_var", "Select independent variable", choices = c("food security" = "fs", "nutrition security" = "ns", "hard_to_get", "expensive","lack_of_choices","hard_to_reach","lack_of_transport"))
         ),
 
         # Show a plot of the generated distribution
@@ -84,9 +84,9 @@ server <- function(input, output) {
     df |>
     group_by(.data[[ind_var]], .data[[demo]]) |> 
     summarise(count = n())  |>
-    group_by(.data[[demo]]) |>
-    filter(.data[[ind_var]] == "low") |>
-    select(-.data[[ind_var]])
+    group_by(.data[[demo]]) 
+    #filter(.data[[ind_var]] == "low") |>
+    #select(-.data[[ind_var]])
     #pivot_wider(names_from = .data[[demo]], values_from = count)
   }
   
@@ -118,7 +118,8 @@ server <- function(input, output) {
   
   # write function for generating plots
   plot_fx <- function(demo, ind_var){
-    var_y <- ifelse(ind_var == "fs", "fslow", "nslow")
+   # fsns <- ifelse(ind_var == "fs", "fslow", "nslow")
+    var_y <- if(ind_var == "fs") {"fslow"} else if (ind_var == "ns") {"nslow"} else {ind_var}
     ggplot(svy_object(), aes(x=.data[[demo]], y = .data[[var_y]], fill =  '#00BFC4')) + 
       geom_bar(stat="identity", show.legend=F) 
   }
