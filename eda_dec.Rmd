@@ -10,6 +10,7 @@ library(haven)
 library(janitor)
 library(expss)
 library(survey)
+library(gridExtra)
 
 source("001_data_processing_dec.R")
 source("002_recode.R")
@@ -19,22 +20,55 @@ source("002_recode.R")
 
 
 ```{r cars}
-  # State analysis -------------------------------------------------------------------------
-  fim_states <- c("AR", "CA", "MA", "NC", "NJ", "NY", "OR", "WA", "DE", "IL", "NM")
-  state_df <- df |> filter(state %in% fim_states) |>
-    group_by(state) |> 
-    summarise(count = n())  
+# State analysis -------------------------------------------------------------------------
+#fim_states <- c("AR", "CA", "MA", "NC", "NJ", "NY", "OR", "WA", "DE", "IL", "NM", "VA")
+fim_states <- c("CA", "MA", "NC", "NJ", "NY", "OR", "WA", "VA")
 
-  
-  ggplot(state_df, aes(x= count, y = state)) + 
-      geom_bar(stat="identity", show.legend=F) 
-```
-```{r chunk}
+# filter for FIM states
 fim_df <- df |> filter(state %in% fim_states)
+
+# create survey object
 svy <- svydesign(ids=~1, weights = ~weight, data = fim_df)
 
-ao_svy <- svyby(~q8a, by = ~state, design = svy, FUN = svymean) |> as_tibble() 
+# function 
+state_fx <- function(ind_var, question){
+  svy_object <- svyby(
+      formula = as.formula(paste0("~", ind_var)),
+      by = ~state,
+      design = svy,
+      FUN = svymean
+    ) |> as_tibble()  |>
+    mutate(state = factor(state, levels = fim_states)) %>%
+    arrange(match(state, fim_states))
+  
+  p <- ggplot(svy_object, aes(x= state, y = .data[[ind_var]])) + 
+    geom_bar(stat="identity", show.legend=F, fill =  '#00BFC4') +
+   labs(title = question) + ylim(0,1)
+  
+  return(p)
+}
 
-ggplot(ao_svy, aes(x= state, y = q8a, fill =  '#F8766D')) + 
-      geom_bar(stat="identity", show.legend=F) 
+
 ```
+
+
+```{r chunk}
+# Looking at questions of FIM awareness
+p_q8a <- state_fx("q8a", "I have heard of Medically tailored meals")
+p_q8b <- state_fx("q8b", "I have heard of Medically tailored groceries")
+p_q8c <- state_fx("q8c", "I have heard of Produce prescription programs")
+grid.arrange(p_q8a, p_q8b, p_q8c, ncol =1)
+
+```
+
+
+```{r chunk}
+# Looking at questions for willingness to enroll in FIM
+p_q9a <- state_fx("q9a", "Regular nutrition counseling and/or cooking education around eating a healthy diet")
+p_q9b <- state_fx("q9b", "Medically tailored meals")
+p_q9c <- state_fx("q9c", "Medically tailored groceries")
+p_q9d <- state_fx("q9d", "Produce prescription programs")
+grid.arrange(p_q9a, p_q9b, p_q9c, p_q9d, ncol =1)
+
+```
+
