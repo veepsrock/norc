@@ -17,7 +17,7 @@ library(DT)
 
 
 # Read in data -------------------------------------------------------------------
-source("001_data_processing.R")
+source("001_data_processing_dec.R")
 source("002_recode.R")
 
 # create survey object
@@ -26,43 +26,46 @@ svy <- svydesign(ids=~1, weights = ~weight, data = df)
 
 
 # create list of demo 
-demo_list <- c("asianorigin_l", "income4_l", "region4_l", "gender_l", "internet_l", "lang_athome_l", "age4_l",  "snap")
-
+demo_list <- c("asianorigin_l", "income4_l", "region4_l", "coo_l", "internet_l", "lang_athome_l", "age4_l")
 
 # create a list of independent variables
-ind_vars <- c("fs", "ns")
+ind_vars <- c("q1a", "q1e", "q1b", "q1c", "q6", "q7a", "q7b", "q7c", "q7d", "q7e","q8a", "q8b", "q8c", "q9a","q9b", "q9c", "q9d")
+ind_qs <- c("At home, I tend to eat foods from my culture", "Food from my culture are generally healthier than American food", "I trust my doctor, or other health professionals, for information on healthy eating", "When I am feeling ill, I will eat specific food ingredients to get healthy", "I believe food is healing/good for my body", "Providing more nutrition counseling to patients", "Teaching patients to cook", "Helping pay for healthier food in grocery stores, supermarkets, and/or farmers' markets for patients with appropriate medical conditions", "Having on-site food grocery or pantry pick-up locations for healthier food for patients with appropriate medical conditions", "Helping to pay for delivery of healthy groceries or meals to homes of patients with appropriate medical conditions", "I have heard of Medically tailored meals", "I have heard of Medically tailored groceries", "I have heard of Produce prescription programs", "If offered to me, I would participate in regular nutrition counseling and/or cooking education around eating a healthy diet", "If offered to me, I would participate in Medically tailored meals", "If offered to me, I would participate in Medically tailored groceries", "If offered to me, I would participate in Produce prescription programs" )
+questions <- data.frame(ind_vars, ind_qs)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Relationship between demographic group and food security"),
-    titlePanel(h3("22% of the AANHPI population face low food security and 20% face low nutrition security.")),
-    titlePanel(h3("Of those who face low food security, 60% also face low nutrition security.")),
-    p("There is a significant result between food security and asian origin, income, region, SNAP access, and language at home."),
-    p("There is a significant result between nutrition security and asian origin, income, SNAP access, language at home, and age."),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-          radioButtons("demo", "Select demographic of interest", choices = demo_list),
-          radioButtons("ind_var", "Select independent variable", choices = c("food security" = "fs", "nutrition security" = "ns", "hard_to_get", "expensive","lack_of_choices","hard_to_reach","lack_of_transport"))
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-          textOutput("chi_results"),
-          plotOutput("bar_plot"),
-          h3("Weighted breakdown by demographic group"),
-          DTOutput("svy_dt"),
-          h3("Count totals"),
-          DTOutput("demo_dt")
-        )
+  
+  # Application title
+  titlePanel("Relationship between demographic group and cultural food affinity and FIM"),
+  titlePanel(h3(textOutput("question"))),
+  
+  # Sidebar with a slider input for number of bins 
+  sidebarLayout(
+    sidebarPanel(
+      radioButtons("demo", "Select demographic of interest", choices = demo_list),
+      radioButtons("ind_var", "Select independent variable", choices = c(ind_vars, "high_cfa", "high_fim", "high_fim_vals"))
+    ),
+    
+    # Show a plot of the generated distribution
+    mainPanel(
+      textOutput("chi_results"),
+      plotOutput("bar_plot"),
+      h3("Weighted breakdown by demographic group"),
+      DTOutput("svy_dt"),
+      h3("Count totals"),
+      DTOutput("demo_dt")
     )
+  )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  
+  # Output question --------------------------------------------------------------
+  output$question <- reactive({
+    questions |> filter(ind_vars == input$ind_var) |> pull(ind_qs)
+  })
   
   # Conducting chi square tests --------------------------------------------------
   
@@ -83,9 +86,12 @@ server <- function(input, output) {
   # write function for raw counts
   table_fx <- function(demo, ind_var) {
     df |>
-    group_by(.data[[ind_var]], .data[[demo]]) |> 
-    summarise(count = n())  |>
-    group_by(.data[[demo]]) 
+      group_by(.data[[ind_var]], .data[[demo]]) |> 
+      summarise(count = n())  |>
+      group_by(.data[[demo]]) |>
+      mutate(proportional_count = count / sum(count))
+     # pivot_wider(names_from = .data[[demo]], values_from = proportional_count, values_fill = 0)
+    
     #filter(.data[[ind_var]] == "low") |>
     #select(-.data[[ind_var]])
     #pivot_wider(names_from = .data[[demo]], values_from = count)
@@ -110,7 +116,7 @@ server <- function(input, output) {
     
   }
   
- # create survey object
+  # create survey object
   svy_object <- reactive({
     svy_fx(input$demo, input$ind_var)
   })
@@ -119,7 +125,7 @@ server <- function(input, output) {
   
   # write function for generating plots
   plot_fx <- function(demo, ind_var){
-   # fsns <- ifelse(ind_var == "fs", "fslow", "nslow")
+    # fsns <- ifelse(ind_var == "fs", "fslow", "nslow")
     var_y <- if(ind_var == "fs") {"fslow"} else if (ind_var == "ns") {"nslow"} else {ind_var}
     ggplot(svy_object(), aes(x=.data[[demo]], y = .data[[var_y]], fill =  '#00BFC4')) + 
       geom_bar(stat="identity", show.legend=F) 
@@ -134,7 +140,9 @@ server <- function(input, output) {
   output$svy_dt <- renderDT({
     svy_object() |> mutate(across(where(is.numeric), round, 3))
   })
-}
+  
+
+} # end server
 
 # Run the application 
 shinyApp(ui = ui, server = server)
