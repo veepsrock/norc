@@ -47,6 +47,12 @@ glm <- glm(low_fs ~ relevel(factor(asianorigin), ref = 1) + income4 + hhsize, da
 summ(glm, confint = TRUE, digits = 3, exp = TRUE)
 ```
 
+```{r asianorigin reference}
+glm <- glm(low_fs ~ asianorigin + income4 + hhsize, data = df, family = "binomial")
+#stargazer(glm, type = "text", title = "Income Reference")
+summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+```
+
 ## Comparing Gender
 
 ```{r gender reference}
