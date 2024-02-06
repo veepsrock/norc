@@ -1,0 +1,26 @@
+---
+title: "regression_dec"
+author: "Tazz Orchi"
+date: "2024-02-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+setwd("/Users/torchi/Documents/GitHub/norc")
+
+library(ggplot2)
+library(glmnet)
+library(stargazer)
+library(jtools)
+
+df <- read_sav("data/dec/Amplify AAPI_M4 December 2023 Final Data.sav") |> clean_names()
+```
+
+```{r income reference}
+glm <- glm(low_fs ~ relevel(factor(income4), ref = 3) + hhsize, data = df, family = "binomial")
+#stargazer(glm, type = "text", title = "Income Reference")
+summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+```
