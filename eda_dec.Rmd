@@ -1,0 +1,40 @@
+---
+title: "eda_dec.Rmd"
+output: html_document
+date: "2024-02-06"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(haven)
+library(janitor)
+library(expss)
+library(survey)
+
+source("001_data_processing_dec.R")
+source("002_recode.R")
+```
+
+## State analysis for FIM
+
+
+```{r cars}
+  # State analysis -------------------------------------------------------------------------
+  fim_states <- c("AR", "CA", "MA", "NC", "NJ", "NY", "OR", "WA", "DE", "IL", "NM")
+  state_df <- df |> filter(state %in% fim_states) |>
+    group_by(state) |> 
+    summarise(count = n())  
+
+  
+  ggplot(state_df, aes(x= count, y = state)) + 
+      geom_bar(stat="identity", show.legend=F) 
+```
+```{r chunk}
+fim_df <- df |> filter(state %in% fim_states)
+svy <- svydesign(ids=~1, weights = ~weight, data = fim_df)
+
+ao_svy <- svyby(~q8a, by = ~state, design = svy, FUN = svymean) |> as_tibble() 
+
+ggplot(ao_svy, aes(x= state, y = q8a, fill =  '#F8766D')) + 
+      geom_bar(stat="identity", show.legend=F) 
+```

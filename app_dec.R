@@ -29,8 +29,8 @@ svy <- svydesign(ids=~1, weights = ~weight, data = df)
 demo_list <- c("asianorigin_l", "income4_l", "region4_l", "coo_l", "internet_l", "lang_athome_l", "age4_l")
 
 # create a list of independent variables
-ind_vars <- c("q1a", "q1e", "q1b", "q1c", "q6", "q7a", "q7b", "q7c", "q7d", "q7e")
-ind_qs <- c("At home, I tend to eat foods from my culture", "Food from my culture are generally healthier than American food", "I trust my doctor, or other health professionals, for information on healthy eating", "When I am feeling ill, I will eat specific food ingredients to get healthy", "I believe food is healing/good for my body", "Providing more nutrition counseling to patients", "Teaching patients to cook", "Helping pay for healthier food in grocery stores, supermarkets, and/or farmers' markets for patients with appropriate medical conditions", "Having on-site food grocery or pantry pick-up locations for healthier food for patients with appropriate medical conditions", "Helping to pay for delivery of healthy groceries or meals to homes of patients with appropriate medical conditions")
+ind_vars <- c("q1a", "q1e", "q1b", "q1c", "q6", "q7a", "q7b", "q7c", "q7d", "q7e","q8a", "q8b", "q8c", "q9a","q9b", "q9c", "q9d")
+ind_qs <- c("At home, I tend to eat foods from my culture", "Food from my culture are generally healthier than American food", "I trust my doctor, or other health professionals, for information on healthy eating", "When I am feeling ill, I will eat specific food ingredients to get healthy", "I believe food is healing/good for my body", "Providing more nutrition counseling to patients", "Teaching patients to cook", "Helping pay for healthier food in grocery stores, supermarkets, and/or farmers' markets for patients with appropriate medical conditions", "Having on-site food grocery or pantry pick-up locations for healthier food for patients with appropriate medical conditions", "Helping to pay for delivery of healthy groceries or meals to homes of patients with appropriate medical conditions", "I have heard of Medically tailored meals", "I have heard of Medically tailored groceries", "I have heard of Produce prescription programs", "If offered to me, I would participate in regular nutrition counseling and/or cooking education around eating a healthy diet", "If offered to me, I would participate in Medically tailored meals", "If offered to me, I would participate in Medically tailored groceries", "If offered to me, I would participate in Produce prescription programs" )
 questions <- data.frame(ind_vars, ind_qs)
 
 # Define UI for application that draws a histogram
@@ -140,7 +140,9 @@ server <- function(input, output) {
   output$svy_dt <- renderDT({
     svy_object() |> mutate(across(where(is.numeric), round, 3))
   })
-}
+  
+
+} # end server
 
 # Run the application 
 shinyApp(ui = ui, server = server)
