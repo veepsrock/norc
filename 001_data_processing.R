@@ -76,3 +76,46 @@ df <- df |>
   hh_income = income_bracket/hhsize,
   hh_income_m = hh_income/12
   )
+
+
+# Relabeling SNAP values  -----------------------------
+df <- df |> 
+  mutate(snap = case_when(q9 == 1 ~ "Enrolled in past",
+                 q9 == 2 ~ "Currently enrolled",
+                 q9 == 3 ~ "Not enrolled",
+                 q9 == 77 ~ "I don't know",
+                 q9 >97 ~ "Skipped/Refused")
+)
+
+# Write function for recoding likert scale ----------------------------------------
+
+likert_fx_hard <- function(new_col_name, org_col){
+  df <- df |> mutate(
+    {{new_col_name}} := case_when(
+      .data[[org_col]] < 4 ~ 1,
+      .data[[org_col]] > 3 ~ 0)
+      #.data[[org_col]] == 5 ~ 0,
+      #.data[[org_col]] < 76 ~ NA_real_)
+  )
+  return(df)
+}
+
+
+likert_fx_often <- function(new_col_name, org_col){
+  df <- df |> mutate(
+    {{new_col_name}} := case_when(
+      .data[[org_col]] < 3 ~ 1,
+      .data[[org_col]] >2 ~ 0)
+      #.data[[org_col]] < 76 ~ NA_real_)
+  )
+  return(df)
+}
+
+# dichotomize questions 7, 8a-8d
+df <- likert_fx_hard("hard_to_get", "q7")
+df <- likert_fx_often("expensive", "q8a")
+df <- likert_fx_often("lack_of_choices", "q8b")
+df <- likert_fx_often("hard_to_reach", "q8c")
+df <- likert_fx_often("lack_of_transport", "q8d")
+
+

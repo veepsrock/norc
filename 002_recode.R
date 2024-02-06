@@ -41,12 +41,9 @@ df <- df |> mutate(
                             lang_athome ==  5 ~"Vietnamese",
                             lang_athome ==  6 ~"Other Language",
                             lang_athome > 76 ~ "DK/Skipped/Refused"),
-  gender_l = case_when(gender == 0 ~"Unknown",
+  gender_l = case_when(gender == 0 ~ "Unknown",
                        gender == 1 ~ "Male",
                        gender == 2 ~ "Female")
 )
 
 
-# Get binary values for access to SNAP  -----------------------------
-# 1 means currently enrolled or has enrolled previously
-# 0 No or don't know
