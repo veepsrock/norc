@@ -23,6 +23,15 @@ likert_fx <- function(new_col_name, org_col){
  return(df)
 }
 
+# Function for yes/no questions
+yn_fx <- function(new_col_name, org_col){
+  df <- df |> mutate(
+    {{new_col_name}} := case_when(
+      .data[[org_col]] == 1 ~ 1,
+      .data[[org_col]] > 1 ~ 0)
+  )
+  return(df)
+}
 
 # Coding cultural food affinity (cfa)  ----------------------------------------------------
 
@@ -115,6 +124,27 @@ df <- df |> mutate(
   high_fim_vals = case_when(fim_vals == "high" ~ 1,
                             fim_vals == "low" ~ 0)
 )
+
+# Recoding FIM questions  -----------------------------
+# rock 8a - "I have heard of Medically tailored meals"
+# rock 8b - "I have heard of Medically tailored groceries"
+# rock 8c - "I have heard of Produce prescription programs"
+# rock 9a - "If offered to me, I would participate in regular nutrition counseling and/or cooking education around eating a healthy diet"
+# rock 9b - "If offered to me, I would participate in Medically tailored meals"
+# rock 9c - "If offered to me, I would participate in Medically tailored groceries"
+# rock 9d - "If offered to me, I would participate in Produce prescription programs"
+
+df <- yn_fx("q8a", "rock8a")
+df <- yn_fx("q8b", "rock8b")
+df <- yn_fx("q8c", "rock8c")
+df <- yn_fx("q9a", "rock9a")
+df <- yn_fx("q9b", "rock9b")
+df <- yn_fx("q9c", "rock9c")
+df <- yn_fx("q9d", "rock9d")
+
+
+
+
 
 
 # Calculating household income brackets  -----------------------------
