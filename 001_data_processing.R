@@ -56,7 +56,9 @@ df <- df |>
                  q9 == 2 ~ "Currently enrolled",
                  q9 == 3 ~ "Not enrolled",
                  q9 == 77 ~ "I don't know",
-                 q9 >97 ~ "Skipped/Refused")
+                 q9 >97 ~ "Skipped/Refused"),
+         snap_enrol = case_when(q9 <3 ~ 1,
+                                q9 >2 ~0)
 )
 
 # Write function for recoding likert scale ----------------------------------------
