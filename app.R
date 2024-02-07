@@ -26,7 +26,7 @@ svy <- svydesign(ids=~1, weights = ~weight, data = df)
 
 
 # create list of demo 
-demo_list <- c("asianorigin_l", "income4_l", "region4_l", "gender_l", "internet_l", "lang_athome_l", "age4_l",  "snap")
+demo_list <- c("asianorigin_l", "income4_l", "region4_l", "gender_l", "internet_l", "lang_athome_l", "age4_l",  "snap", "snap_elig")
 
 
 # create a list of independent variables

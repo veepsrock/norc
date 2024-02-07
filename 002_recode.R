@@ -47,3 +47,61 @@ df <- df |> mutate(
 )
 
 
+# Calculating household income brackets  -----------------------------
+
+df <- df |>
+  mutate(income_upper = case_when(
+    income == 1 ~ 4999,
+    income == 2 ~ 9999,
+    income == 3 ~ 14999,
+    income == 4 ~ 19999,
+    income == 5 ~ 24999,
+    income == 6 ~ 29999,
+    income == 7 ~ 34999,
+    income == 8 ~ 39999,
+    income == 9 ~ 49999,
+    income == 10 ~ 59999,
+    income == 11 ~ 74999,
+    income == 12 ~ 84999,
+    income == 13 ~ 99999,
+    income == 14 ~ 124999,
+    income == 15 ~ 149999,
+    income == 16 ~ 174999,
+    income == 17 ~ 199999,
+    income == 18 ~ 1000000
+  ),
+  income_lower = case_when(
+    income == 1 ~ 0,
+    income == 2 ~ 5000,
+    income == 3 ~ 10000,
+    income == 4 ~ 15000,
+    income == 5 ~ 20000,
+    income == 6 ~ 25000,
+    income == 7 ~ 30000,
+    income == 8 ~ 35000,
+    income == 9 ~ 40000,
+    income == 10 ~ 50000,
+    income == 11 ~ 60000,
+    income == 12 ~ 75000,
+    income == 13 ~ 85000,
+    income == 14 ~ 100000,
+    income == 15 ~ 125000,
+    income == 16 ~ 150000,
+    income == 17 ~ 175000,
+    income == 18 ~ 200000
+  ),
+  monthly_income_u = income_upper/12,
+  monthly_income_l = income_lower/12
+  )
+
+
+# Creating snap income eligibility limits
+hhsize <- c(1, 2, 3,4,5,6)
+income_criteria <- c(1580,2137,2694,3250,3807,4364)
+snap <- data.frame(hhsize, income_criteria)
+
+# Adding to dataframe
+df <- df |> right_join(snap, df,  by = "hhsize") |>
+ mutate(snap_elig = ifelse(monthly_income_l < income_criteria, 1, 0))
+
+
