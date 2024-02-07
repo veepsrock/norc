@@ -15,7 +15,7 @@ library(knitr)
 library(survey)
 library(scales)
 # Read in data -------------------------------------------------------------------
-
+source("001_data_processing.R")
 source("002_recode.R")
 
 
@@ -211,3 +211,22 @@ kable(ao_health_svy)
 
 ```
 
+# SNAP Eligibility
+``` {r asianorigin_l, echo = FALSE}
+# Asian origin breakdown
+snap_elig <- df |> filter(snap_elig==1) |>
+  group_by(snap_enrol, asianorigin_l) |> 
+  summarise(count = n())|> 
+  group_by(asianorigin_l)|>
+  mutate(proportional_count = count / sum(count))
+
+#kable(ao |>
+#  pivot_wider(names_from = asianorigin_l, values_from = proportional_count, values_fill = 0))
+
+svy_s <- svydesign(ids=~1, weights = ~weight, data = {df |> filter(snap_elig==1)})
+
+snap_svy <- svyby(~snap_enrol, by = ~asianorigin_l, design = svy_s, FUN = svymean) |> as_tibble()
+
+kable(ao_health_svy)
+
+```
