@@ -18,6 +18,69 @@ library(ggplot2)
 library(glmnet)
 library(stargazer)
 library(jtools)
+library(tidyverse)
+library(janitor)
+library(haven)
+library(sjPlot)
+```
+
+## Comparing Demographics differences across questions concerning FS
+
+```{r fx for y/n}
+likert_fx_y_n <- function(new_col_name, org_col){
+  df <- df |> mutate(
+    {{new_col_name}} := case_when(
+      .data[[org_col]] == 1 ~ 1,
+      .data[[org_col]] > 1 ~ 0)
+  )
+  return(df)
+}
+```
+
+```{r dichotomize fs questions}
+df <- likert_fx_often("not_last", "q1a")
+df <- likert_fx_often("balance", "q1b")
+df <- likert_fx_y_n("meal_size", "q3")
+df <- likert_fx_often("months", "q4")
+df <- likert_fx_y_n("eat_less", "q5")
+df <- likert_fx_y_n("hungry", "q6")
+```
+
+```{r reference q1a}
+glm <- glm(not_last ~ relevel(factor(asianorigin), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference q1b}
+glm <- glm(balance ~ relevel(factor(asianorigin), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference q3}
+glm <- glm(meal_size ~ relevel(factor(asianorigin), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference q4}
+glm <- glm(months ~ relevel(factor(asianorigin), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference q5}
+glm <- glm(eat_less ~ relevel(factor(asianorigin), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference q6}
+glm <- glm(hungry ~ relevel(factor(asianorigin), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Comparing Demographics differences across questions concerning NS
+
+```{r refernce q7}
+glm <- glm(hard_to_get ~ relevel(factor(asianorigin), ref = 1), data = df, family = "binomial")
+tab_model(glm)
 ```
 
 ## Comparing Income

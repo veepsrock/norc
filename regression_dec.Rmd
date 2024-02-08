@@ -11,6 +11,8 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 setwd("/Users/torchi/Documents/GitHub/norc")
 
+source("001_data_processing_dec.R")
+
 library(ggplot2)
 library(glmnet)
 library(stargazer)
@@ -18,12 +20,14 @@ library(jtools)
 library(tidyverse)
 library(janitor)
 library(haven)
-
-df <- read_sav("data/dec/Amplify AAPI_M4 December 2023 Final Data.sav") |> clean_names()
+library(sjPlot)
 ```
 
+## Q1A: At home, I tend to eat foods from my culture
+
 ```{r income reference}
-glm <- glm(rock1a ~ relevel(factor(income4), ref = 3) + hhsize, data = df, family = "binomial")
+glm <- glm(q1a ~ relevel(factor(income4), ref = 3) + hhsize, data = df, family = "binomial")
 #stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+#summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+tab_model(glm)
 ```
