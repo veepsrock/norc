@@ -119,6 +119,20 @@ tab_model(glm)
 Asian origin is not significant 
 Signif: coo 
 
+### Univariate test for age and lang 
+
+Language is not significant 
+```{r q8a lang}
+glm <- glm(q8a ~ lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Age is not significant
+```{r q8a age}
+glm <- glm(q8a ~ age4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
 ```{r q8a}
 glm <- glm(q8a ~ coo_l, data = df, family = "binomial")
 tab_model(glm)
