@@ -87,12 +87,61 @@ tab_model(glm)
 
 Signif: asian origin, lang, income, snap
 
+### Univariate analysis for exposure and outcome variables 
+
+Gender does not have a significant relationship 
+```{r q7 gender}
+glm <- glm(hard_to_get ~ gender_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Snap does have a significant relationship (0.22 odds ratio for those not enrolled)
+
+```{r q7 snap}
+glm <- glm(hard_to_get ~ snap, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Language spoken at home does have a significant relationship (2.95 odds ratio for tagalog and 1.93 odds ratio for other language)
+```{r q7 lang}
+glm <- glm(hard_to_get ~ lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Income is significant (all brackets)
+
+```{r q7 income}
+glm <- glm(hard_to_get ~ income4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Age is not significant 
+
+```{r q7 age}
+glm <- glm(hard_to_get ~ age4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Education is significant
+
+```{r q7 educ}
+glm <- glm(hard_to_get ~ educ5, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Resulting significant variables: educ5, income4, lang_athome, snap
+
 ```{r refernce ns q7}
-glm <- glm(hard_to_get ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + lang_athome_l + snap, data = df, family = "binomial")
+glm <- glm(hard_to_get ~ asianorigin_l + income4_l + lang_athome_l + snap + educ5, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r refernce ns q7 w/o asian origin}
+glm <- glm(hard_to_get ~ income4_l + lang_athome_l + snap + educ5, data = df, family = "binomial")
 tab_model(glm)
 ```
 ----------------------------------------------------------------------------------------------------------
-## Food Security 
+## Food Security significance
 
 Signif: asian origin, income, region, lang, snap
 
