@@ -11,16 +11,157 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 setwd("/Users/torchi/Documents/GitHub/norc")
 
+source("001_data_processing_dec.R")
+source("002_recode.R")
+
 library(ggplot2)
 library(glmnet)
 library(stargazer)
 library(jtools)
-
-df <- read_sav("data/dec/Amplify AAPI_M4 December 2023 Final Data.sav") |> clean_names()
+library(tidyverse)
+library(janitor)
+library(haven)
+library(sjPlot)
 ```
 
-```{r income reference}
-glm <- glm(low_fs ~ relevel(factor(income4), ref = 3) + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+## Q1A: At home, I tend to eat foods from my culture
+
+Signif: asian origin, age, coo
+
+```{r q1a}
+glm <- glm(q1a ~ relevel(factor(asianorigin_l), ref = 1) + coo_l + age4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q1E: Food from my culture are generally healthier than American Food 
+
+Signif: asian origin, age, lang_athome, internet, income 
+
+```{r q1e}
+glm <- glm(q1e ~ relevel(factor(asianorigin_l), ref = 1) + lang_athome_l + age4_l + internet_l + income4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+## Q1B I trust my doctor, or other health professionals, for information on healthy eating 
+
+Asian origin is not significant 
+Signif: income
+
+```{r q1b}
+glm <- glm(q1b ~ income4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q1C: When I am feeling ill, I will eat specific food ingredients to get healthy 
+
+Asian origin is not significant 
+Signif: lang, coo
+
+```{r q1c}
+glm <- glm(q1c ~ lang_athome_l + coo_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q6: I believe food is healing/food for my body 
+
+Asian origin is not significant
+Signif: internet, lang
+
+```{r q6}
+glm <- glm(q6 ~ lang_athome_l + internet_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q7A: Providing more nutrition counseling to patients 
+
+Asian origin is not significant 
+Signif: income, internet, age 
+
+```{r q7a}
+glm <- glm(q7a ~ income4_l + internet_l + age4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q7B: Teaching patients to cook
+
+No demographic of interest is significant 
+
+## Q7C: Helping pay for healthier food in grocery stores, supermarkets, and/or farmers markets for patients with appropriate medical conditions 
+
+Asian origin is not significant 
+Signif: income, lang, age 
+
+```{r q7c}
+glm <- glm(q7c ~ lang_athome_l + income4_l + age4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q7D: Havining on-site food grocery or pantry pick-up locations for healthier food for patients with appropriate medical conditions 
+
+Asian origin is not significant 
+Signif: coo, age 
+
+```{r q7d}
+glm <- glm(q7d ~ coo_l + age4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q7E: Helping to pay for delivery of healthy groceries or meals to homes of patients with appropriate medical conditions 
+
+Signif: asian origin, income, coo, age
+
+```{r q7e}
+glm <- glm(q7e ~ relevel(factor(asianorigin_l), ref = 1) + coo_l + age4_l + income4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q8A: I have heard of Medically tailored meals 
+
+Asian origin is not significant 
+Signif: coo 
+
+```{r q8a}
+glm <- glm(q8a ~ coo_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q8B: I have heard of Medically tailored groceries 
+
+No demographic group of interest is significant 
+
+## Q8C: I have heard of Produce prescription programs 
+
+Asian origin is not significant 
+Signif: income
+
+```{r q8c}
+glm <- glm(q8c ~ income4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q9A: If offered to me, I would participate in regular nutrition counseling and/or cooking education around eating a healthy diet 
+
+No demographic group of interest is significant 
+
+## Q9B: If offered to me, I would participate in Medically tailored meals 
+
+No demographic group of interest is significant 
+
+## Q9C: If offered to me, I would particpate in Medically tailored groceries 
+
+Asian origin is not significant 
+Signif: lang 
+
+```{r q9c}
+glm <- glm(q9c ~ lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Q9D: If offered to me, I would participate in Produce prescription programs 
+
+Asian origin is not significant 
+Signif: income
+
+```{r q9d}
+glm <- glm(q9d ~ income4_l, data = df, family = "binomial")
+tab_model(glm)
 ```

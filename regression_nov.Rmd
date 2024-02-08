@@ -18,7 +18,83 @@ library(ggplot2)
 library(glmnet)
 library(stargazer)
 library(jtools)
+library(tidyverse)
+library(janitor)
+library(haven)
+library(sjPlot)
 ```
+
+## Comparing Demographics differences across questions concerning FS
+
+```{r fx for y/n, include = FALSE}
+likert_fx_y_n <- function(new_col_name, org_col){
+  df <- df |> mutate(
+    {{new_col_name}} := case_when(
+      .data[[org_col]] == 1 ~ 1,
+      .data[[org_col]] > 1 ~ 0)
+  )
+  return(df)
+}
+```
+
+```{r dichotomize fs questions, include=FALSE}
+df <- likert_fx_often("not_last", "q1a")
+df <- likert_fx_often("balance", "q1b")
+df <- likert_fx_y_n("meal_size", "q3")
+df <- likert_fx_often("months", "q4")
+df <- likert_fx_y_n("eat_less", "q5")
+df <- likert_fx_y_n("hungry", "q6")
+```
+
+```{r origin}
+#checking sample size per demographic
+table(df$asianorigin_l)
+```
+
+Individuals who are Vietnamese or NHPI are 2.51 and 3.56 times as likely, respectively to say that it is sometimes/often true that the food they purchased did not last when controlling for income and region.
+
+```{r reference fs q1a}
+glm <- glm(not_last ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference fs q1b}
+glm <- glm(balance ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference fs q3}
+glm <- glm(meal_size ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference fs q4}
+glm <- glm(months ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference fs q5}
+glm <- glm(eat_less ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference fs q6}
+glm <- glm(hungry ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Comparing Demographics differences across questions concerning NS
+
+Signif: asian origin, lang, income, snap
+
+```{r refernce ns q7}
+glm <- glm(hard_to_get ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + lang_athome_l + snap, data = df, family = "binomial")
+tab_model(glm)
+```
+----------------------------------------------------------------------------------------------------------
+## Food Security 
+
+Signif: asian origin, income, region, lang, snap
 
 ## Comparing Income
 
@@ -27,430 +103,67 @@ We use Income as a Reference category (people making between 60K-100K) and want 
 Those with income under 30K are 3 times as likely to have less food security
 
 ```{r income reference}
-glm <- glm(low_fs ~ relevel(factor(income4), ref = 3) + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+glm <- glm(low_fs ~ relevel(factor(income4_l), ref = 3) + region4_l + asianorigin_l + lang_athome_l + snap, data = df, family = "binomial")
+tab_model(glm)
 ```
 ## Comparing Age
 
 ```{r age reference}
-glm <- glm(low_fs ~ relevel(factor(age4), ref = 1) + income4 + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+glm <- glm(low_fs ~ relevel(factor(age4_l), ref = 1) + income4_l + region4_l + snap + asianorigin_l + lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
 ```
 
 ## Comparing asianorigin
 
 ```{r asianorigin reference}
-glm <- glm(low_fs ~ relevel(factor(asianorigin), ref = 1) + income4 + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+glm <- glm(low_fs ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l + lang_athome_l + snap, data = df, family = "binomial")
+tab_model(glm)
 ```
 
-```{r asianorigin reference}
-glm <- glm(low_fs ~ asianorigin + income4 + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+```{r asianorigin reference non factored}
+glm <- glm(low_fs ~ asianorigin_l + income4_l + region4_l + lang_athome_l + snap, data = df, family = "binomial")
+tab_model(glm)
 ```
 
 ## Comparing Gender
 
 ```{r gender reference}
-glm <- glm(low_fs ~ relevel(factor(gender), ref = 1) + income4 + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+glm <- glm(low_fs ~ relevel(factor(gender_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
 ```
 
 ## Comparing employment status 
 
 ```{r employ reference}
-glm <- glm(low_fs ~ relevel(factor(employ), ref = 1) + income4 + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+glm <- glm(low_fs ~ relevel(factor(employ), ref = 1) + income4_l + region4_l + asianorigin_l + snap + lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
 ```
 
 ## Comparing Internet access 
 
 ```{r internet reference}
-glm <- glm(low_fs ~ relevel(factor(internet), ref = 1) + income4 + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+glm <- glm(low_fs ~ relevel(factor(internet_l), ref = 1) + income4_l + region4_l + asianorigin_l + snap + lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
 ```
 
 ## Comparing housing reference 
 
 ```{r housing reference}
-glm <- glm(low_fs ~ relevel(factor(housing), ref = 1) + income4 + hhsize, data = df, family = "binomial")
-#stargazer(glm, type = "text", title = "Income Reference")
-summ(glm, confint = TRUE, digits = 3, exp = TRUE)
+glm <- glm(low_fs ~ relevel(factor(housing), ref = 1) + income4_l + region4_l + asianorigin_l + snap + lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
 ```
-_______________________________________________________________________________
+-----------------------------------------------------------------------------------------
+## Looking for intersections for example "People falling in x group are more likely to have internet..." 
 
-## Regression Analysis for low_fs
-
-### Q8A
-
-#### Healthy foods are too expensive (often/sometimes true, never true, etc.)
-
-```{r logit1, results='asis'}
-logit_model1 <- glm(low_fs ~ q8a + age + income4, data = df, family = "binomial")
-#stargazer(logit_model1, type = "text", title = "Logistic Regression Summary")
-
-#ggplot(df2, aes(x = age, y = low_fs)) +
-  #geom_point() +
-  #stat_smooth(method = "glm", family = "binomial", se = FALSE, color = "blue") +
-  #labs(title = "Logistic Regression", x = "Independent Variable", y = "Binary Dependent Variable")
-
-summ(logit_model1, confint = TRUE, digits = 3, exp = TRUE)
+```{r not last}
+#glm <- glm(not_last ~ relevel(factor(internet), ref = 1) + relevel(factor(asianorigin), ref = 1) +  income4 + region4, data = df, family = "binomial")
+#tab_model(glm)
 ```
 
-#### Conclusion:  
-
-### Q8B 
-
-#### There aren't a lot of healthy food choices at the stores where I usually shop 
-
-```{r logit2, results='asis'}
-logit_model2 <- glm(low_fs ~ q8b + age + income, data = df, family = "binomial")
-#stargazer(logit_model2, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model2, confint = TRUE, digits = 3, exp = TRUE)
+```{r internet access}
+glm <- glm(internet ~ relevel(factor(asianorigin_l), ref = 1) +  income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
 ```
 
-#### Conclusion: 
-
-### Q8C
-
-#### Stores or food pantries with healthy foods are too far away or hard to reach 
-
-```{r logit3, results='asis'}
-logit_model3 <- glm(low_fs ~ q8c + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model3, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion:
-
-### Q8d
-
-#### I don't have a car or other transportation to reach stores or food pantries that have healthy foods 
-
-```{r logit4, results='asis'}
-logit_model4 <- glm(low_fs ~ q8d + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model4, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion 
-
-### Q8e
-
-#### I don't have enough time to shope for healthy foods 
-
-```{r logit5, results='asis'}
-logit_model5 <- glm(low_fs ~ q8e + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model5, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion 
-
-### Q8f
-
-#### I don't have enough time to cook healthy foods
-
-```{r logit6, results='asis'}
-logit_model6 <- glm(low_fs ~ q8f + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model6, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion
-
-### Q8g
-
-#### My cooking equipment or storage space is not enough to prepapre healthy foods 
-
-```{r logit7, results='asis'}
-logit_model7 <- glm(low_fs ~ q8g + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model7, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion:
-
-### Q8h
-
-#### Question content
-
-```{r logit8, results='asis'}
-logit_model8 <- glm(low_fs ~ q8h + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model8, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion: 
-
-### Q8i
-
-#### Question Content
-
-```{r logit9, results='asis'}
-logit_model9 <- glm(low_fs ~ q8i + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model9, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion
-
-### Q8j
-
-#### Question Content
-
-```{r logit10, results='asis'}
-logit_model10 <- glm(low_fs ~ q8j + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model10, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion 
-
-### Q8k
-
-#### Question Content
-
-```{r logit11, results='asis'}
-logit_model11 <- glm(low_fs ~ q8k + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model11, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion 
-
-### Q8l
-
-#### Question Content
-
-```{r logit12, results='asis'}
-logit_model12 <- glm(low_fs ~ q8l + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model12, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion 
-
-### Q8m
-
-#### Question Content
-
-```{r logit13, results='asis'}
-logit_model13 <- glm(low_fs ~ q8m + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model13, confint = TRUE, digits = 3, exp = TRUE)
-``` 
-
-#### Conclusion 
-
-### Q9
-
-#### Question Content
-
-```{r logit14, results='asis'}
-logit_model14 <- glm(low_fs ~ q9 + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model14, confint = TRUE, digits = 3, exp = TRUE)
-``` 
-
-#### Conclusion
-
-### Q10
-
-#### Question Content
-
-```{r logit15, results='asis'}
-logit_model15 <- glm(low_fs ~ q10 + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model15, confint = TRUE, digits = 3, exp = TRUE)
-``` 
-
-#### Conclusion
-
-## Regression Analysis for low_ns
-
-### Q8A
-
-#### Healthy foods are too expensive (often/sometimes true, never true, etc.)
-
-```{r logit16, results='asis'}
-logit_model16 <- glm(low_ns ~ q8a + age + income4, data = df, family = "binomial")
-#stargazer(logit_model1, type = "text", title = "Logistic Regression Summary")
-
-#ggplot(df2, aes(x = age, y = low_fs)) +
-  #geom_point() +
-  #stat_smooth(method = "glm", family = "binomial", se = FALSE, color = "blue") +
-  #labs(title = "Logistic Regression", x = "Independent Variable", y = "Binary Dependent Variable")
-
-summ(logit_model16, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion:  
-
-### Q8B 
-
-#### There aren't a lot of healthy food choices at the stores where I usually shop 
-
-```{r logit2, results='asis'}
-logit_model2 <- glm(low_ns ~ q8b + age + income, data = df, family = "binomial")
-#stargazer(logit_model2, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model2, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion: 
-
-### Q8C
-
-#### Stores or food pantries with healthy foods are too far away or hard to reach 
-
-```{r logit3, results='asis'}
-logit_model3 <- glm(low_ns ~ q8c + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model3, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion:
-
-### Q8d
-
-#### I don't have a car or other transportation to reach stores or food pantries that have healthy foods 
-
-```{r logit3, results='asis'}
-logit_model4 <- glm(low_ns ~ q8d + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model4, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion 
-
-### Q8e
-
-#### I don't have enough time to shope for healthy foods 
-
-```{r logit3, results='asis'}
-logit_model5 <- glm(low_ns ~ q8e + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model5, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion 
-
-### Q8f
-
-#### I don't have enough time to cook healthy foods
-
-```{r logit3, results='asis'}
-logit_model6 <- glm(low_ns ~ q8f + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model6, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion
-
-### Q8g
-
-#### My cooking equipment or storage space is not enough to prepapre healthy foods 
-
-```{r logit3, results='asis'}
-logit_model7 <- glm(low_ns ~ q8g + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model7, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion:
-
-### Q8h
-
-#### Question content
-
-```{r logit3, results='asis'}
-logit_model8 <- glm(low_ns ~ q8h + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model8, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion: 
-
-### Q8i
-
-#### Question Content
-
-```{r logit3, results='asis'}
-logit_model9 <- glm(low_ns ~ q8i + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model9, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion
-
-### Q8j
-
-#### Question Content
-
-```{r logit3, results='asis'}
-logit_model10 <- glm(low_ns ~ q8j + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model10, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion 
-
-### Q8k
-
-#### Question Content
-
-```{r logit3, results='asis'}
-logit_model11 <- glm(low_ns ~ q8k + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model11, confint = TRUE, digits = 3, exp = TRUE)
-```
-
-#### Conclusion 
-
-### Q8l
-
-#### Question Content
-
-```{r logit3, results='asis'}
-logit_model12 <- glm(low_ns ~ q8l + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model12, confint = TRUE, digits = 3, exp = TRUE)
-```
-#### Conclusion 
-
-### Q8m
-
-#### Question Content
-
-```{r logit3, results='asis'}
-logit_model13 <- glm(low_ns ~ q8m + age + income, data = df, family = "binomial")
-#stargazer(logit_model3, type = "text", title = "Logistic Regression Summary")
-
-summ(logit_model13, confint = TRUE, digits = 3, exp = TRUE)
-``` 
-
-#### Conclusion 
+-----------------------------------------------------------------------------------------
 
