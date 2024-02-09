@@ -52,7 +52,7 @@ df <- df |>
 
 # Relabeling SNAP values  -----------------------------
 df <- df |> 
-  mutate(snap = case_when(q9 == 1 ~ "Enrolled in past",
+  mutate(snap_l = case_when(q9 == 1 ~ "Enrolled in past",
                  q9 == 2 ~ "Currently enrolled",
                  q9 == 3 ~ "Not enrolled",
                  q9 == 77 ~ "I don't know",
@@ -60,6 +60,8 @@ df <- df |>
          snap_enrol = case_when(q9 <3 ~ 1,
                                 q9 >2 ~0)
 )
+
+
 
 # Write function for recoding likert scale ----------------------------------------
 

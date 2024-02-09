@@ -45,8 +45,6 @@ df <- df |> mutate(
                        gender == 1 ~ "Male",
                        gender == 2 ~ "Female")
 )
-
-
 # Calculating household income brackets  -----------------------------
 
 df <- df |>
@@ -95,13 +93,14 @@ df <- df |>
   )
 
 
-# Creating snap income eligibility limits
+# Creating snap income eligibility limits -----------------------------
 hhsize <- c(1, 2, 3,4,5,6)
 income_criteria <- c(1580,2137,2694,3250,3807,4364)
 snap <- data.frame(hhsize, income_criteria)
 
 # Adding to dataframe
 df <- df |> right_join(snap, df,  by = "hhsize") |>
- mutate(snap_elig = ifelse(monthly_income_l < income_criteria, 1, 0))
+  mutate(snap_elig = ifelse(monthly_income_l < income_criteria, 1, 0))
+
 
 
