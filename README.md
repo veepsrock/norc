@@ -58,3 +58,12 @@ For some reporting purposes, the food security status of households with raw sco
 ### Nutrition security status is assigned as follows:
 
 - While the optimal scoring of the NSS requires more research, one possibility is to define low nutrition security as responses of “somewhat hard", "hard", or "very hard" to the question "Thinking about the last 12 months, how hard was it for you or your household to regularly get and eat healthy foods?"
+
+## Codebook for SNAP variables 
+Here are the variables for SNAP. Eligibility for SNAP is calculated by [USDA monthly household income thresholds.](https://www.fns.usda.gov/snap/recipient/eligibility) Food security is calculated based on the FDA 6-item survey standards. Nutrition security is calculated based on the Tufts University nutrition security screener question. These values can be used after running the [001_data_processing.R](001_data_processing.R) code.
+
+|Variable|Values|Description|Calculated in this file|
+|:---|:---|:---|:---|
+|snap_l (Nov survey)|"curretly enrolled", "enrolled in past", "not enrolled", "I don't know", "Skipped"|Recode of original q9 on November survey|001_data_processing.R](001_data_processing.R)|
+|snap_enrol (Nov survey)|0 or 1|Currently or previously have been enrolled in SNAP (1 = yes)|001_data_processing.R](001_data_processing.R)|
+|snap_elig (Nov and Dec surveys)|0 or 1|Eligible for SNAP based on household income requirements (1 = yes)|[002_recode.R](002_recode.R)|
