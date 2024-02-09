@@ -121,8 +121,8 @@ server <- function(input, output) {
   plot_fx <- function(demo, ind_var){
    # fsns <- ifelse(ind_var == "fs", "fslow", "nslow")
     var_y <- if(ind_var == "fs") {"fslow"} else if (ind_var == "ns") {"nslow"} else {ind_var}
-    ggplot(svy_object(), aes(x=.data[[demo]], y = .data[[var_y]], fill =  '#00BFC4')) + 
-      geom_bar(stat="identity", show.legend=F) 
+    ggplot(svy_object(), aes(x=.data[[demo]], y = .data[[var_y]], fill =  '#ffb500')) + 
+      geom_bar(stat="identity", show.legend=F) +ylim(0,1)
   }
   
   # render plot for survey object
