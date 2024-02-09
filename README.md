@@ -64,6 +64,6 @@ Here are the variables for SNAP. Eligibility for SNAP is calculated by [USDA mon
 
 |Variable|Values|Description|Calculated in this file|
 |:---|:---|:---|:---|
-|snap_l (Nov survey)|"curretly enrolled", "enrolled in past", "not enrolled", "I don't know", "Skipped"|Recode of original q9 on November survey|001_data_processing.R](001_data_processing.R)|
-|snap_enrol (Nov survey)|0 or 1|Currently or previously have been enrolled in SNAP (1 = yes)|001_data_processing.R](001_data_processing.R)|
+|snap_l (Nov survey)|"curretly enrolled", "enrolled in past", "not enrolled", "I don't know", "Skipped"|Recode of original q9 on November survey|[001_data_processing.R](001_data_processing.R)|
+|snap_enrol (Nov survey)|0 or 1|Currently or previously have been enrolled in SNAP (1 = yes)|[001_data_processing.R](001_data_processing.R)|
 |snap_elig (Nov and Dec surveys)|0 or 1|Eligible for SNAP based on household income requirements (1 = yes)|[002_recode.R](002_recode.R)|
