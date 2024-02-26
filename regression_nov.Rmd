@@ -201,6 +201,13 @@ tab_model(glm)
 glm <- glm(low_fs ~ relevel(factor(housing), ref = 1) + income4_l + region4_l + asianorigin_l + snap + lang_athome_l, data = df, family = "binomial")
 tab_model(glm)
 ```
+
+Question here: How do we communicate these findings where we control for factors like hhsize and housing, income, etc. and see these significant relationships  
+
+```{r housing reference hhs}
+glm <- glm(low_fs ~ relevel(factor(housing), ref = 1) + income4_l + region4_l + asianorigin_l + hhsize + lang_athome_l, data = df, family = "binomial")
+tab_model(glm)
+```
 -----------------------------------------------------------------------------------------
 ## Looking for intersections for example "People falling in x group are more likely to have internet..." 
 
@@ -210,9 +217,77 @@ tab_model(glm)
 ```
 
 ```{r internet access}
-glm <- glm(internet ~ relevel(factor(asianorigin_l), ref = 1) +  income4_l + region4_l, data = df, family = "binomial")
+glm <- glm(internet ~ relevel(factor(asianorigin_l), ref = 2) +  income4_l + region4_l, data = df, family = "binomial")
 tab_model(glm)
 ```
 
 -----------------------------------------------------------------------------------------
+## Looking for instersections with snap_enrol and snap_elig
 
+Results suggest strong relationship with income (as expected)
+```{r reference snap_enrol}
+glm <- glm(snap_enrol ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r reference snap_elig}
+glm <- glm(snap_elig ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Snap enrollment and fs/ns
+
+```{r enrol and fs}
+glm <- glm(low_fs ~ snap_enrol + relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r only enrol and fs}
+glm <- glm(low_fs ~ snap_enrol, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r enrol and ns}
+glm <- glm(low_ns ~ snap_enrol + relevel(factor(asianorigin_l), ref = 2) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r only enrol and ns}
+glm <- glm(low_ns ~ snap_enrol + relevel(factor(asianorigin_l), ref = 2), data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Snap eligibility and fs/ns
+
+```{r elig and fs}
+glm <- glm(low_fs ~ snap_elig + relevel(factor(asianorigin_l), ref = 2) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r only elig and fs}
+glm <- glm(low_fs ~ snap_elig, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r elig and ns}
+glm <- glm(low_ns ~ snap_elig + relevel(factor(asianorigin_l), ref = 2) + income4_l + region4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r only elig and ns}
+glm <- glm(low_ns ~ snap_elig, data = df, family = "binomial")
+tab_model(glm)
+```
+
+Look at Q10, individuals who are not enrolled and why 
+Of those who are not currently enrolled or previously enrolled in snap, they identified the process to sign up being difficult as the main reason for not enrolling
+
+```{r q10 enrol}
+glm <- glm(snap_enrol ~ relevel(factor(q10), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r q10 elig}
+glm <- glm(snap_elig ~ relevel(factor(q10), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
