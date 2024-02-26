@@ -58,69 +58,36 @@ df <- df |> mutate(
 
 # Coding FIM values  ----------------------------------------------------
 
-# Responses of “strongly agree” or “somewhat agree” on rock1b, rock1c, rock6 are scored "high"
+# Responses of “strongly agree” or “somewhat agree” on rock1b, rock1c, rock6, rock7a, rock7b, rock7c, rock 7d, rock7e are scored "high"
 # rock1b - I trust my doctor, or other health professionals, for information on healthy eating
 # rock1c - When I am feeling ill, I will eat specific food ingredients to get healthy
 # rock6 -  I believe food is healing/good for my body
+# rock7a - Providing more nutrition counseling to patients
+# rock7b - Teaching patients to cook
+# rock7c -  Helping pay for healthier food in grocery stores, supermarkets, and/or farmers' markets for patients with appropriate medical conditions
+# rock7d - Having on-site food grocery or pantry pick-up locations for healthier food for patients with appropriate medical conditions
+# rock7e - Helping to pay for delivery of healthy groceries or meals to homes of patients with appropriate medical conditions
+
 
 # recoding likert scores
 df <- likert_fx("q1b", "rock1b")
 df <- likert_fx("q1c", "rock1c")
 df <- likert_fx("q6", "rock6")
-
-# summing across all FIM values 
-df <- df |>
-  rowwise() |>
-  mutate(fim_vals_score = sum(c(q1b, q1c, q6), na.rm = T))
-
-# calculate FIM values
-df <- df |> mutate(
-  fim_vals = case_when(fim_vals_score > 0 ~ "high",
-                       fim_vals_score == 0 ~ "low"),
-  high_fim_vals = case_when(fim_vals == "high" ~ 1,
-                            fim_vals == "low" ~ 0)
-)
-
-# Coding perception for FIM  ----------------------------------------------------
-
-# Responses of “strongly agree” or “somewhat agree” on rock7a, rock7b, rock7c, rock 7d, rock7e are scored "high"
-# rock7a - Providing more nutrition counseling to patients
-# rock7b - Teaching patients to cook
-# rock7c -  Helping pay for healthier food in grocery stores, supermarkets, and/or farmers' markets for patients with appropriate medical conditions
-# rock 7d - Having on-site food grocery or pantry pick-up locations for healthier food for patients with appropriate medical conditions
-# rock 7e - Helping to pay for delivery of healthy groceries or meals to homes of patients with appropriate medical conditions
-
-# recoding likert scores
 df <- likert_fx("q7a", "rock7a")
 df <- likert_fx("q7b", "rock7b")
 df <- likert_fx("q7c", "rock7c")
 df <- likert_fx("q7d", "rock7d")
 df <- likert_fx("q7e", "rock7e")
 
-
-# summing across all FIM perception questions 
-df <- df |>
-  rowwise() |>
-  mutate(fim_q_score = sum(c(q7a, q7b, q7c, q7d, q7e), na.rm = T))
-
-# calculate FIM values
-df <- df |> mutate(
-  fim = case_when(fim_q_score > 1 ~ "high",
-                       fim_q_score < 2 ~ "low"),
-  high_fim = case_when(fim == "high" ~ 1,
-                        fim == "low" ~ 0)
-)
-
-
 # summing across all FIM values 
 df <- df |>
   rowwise() |>
-  mutate(fim_vals_score = sum(c(q1b, q1c, q6), na.rm = T))
+  mutate(fim_vals_score = sum(c(q1b, q1c, q6, q7a, q7b, q7c, q7d, q7e), na.rm = T))
 
 # calculate FIM values
 df <- df |> mutate(
-  fim_vals = case_when(fim_vals_score > 0 ~ "high",
-                       fim_vals_score == 0 ~ "low"),
+  fim_vals = case_when(fim_vals_score > 3 ~ "high",
+                       fim_vals_score < 4  ~ "low"),
   high_fim_vals = case_when(fim_vals == "high" ~ 1,
                             fim_vals == "low" ~ 0)
 )
