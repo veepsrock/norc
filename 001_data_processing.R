@@ -61,6 +61,10 @@ df <- df |>
                                 q9 >2 ~0)
 )
 
+df <- df |> 
+  mutate(snap_unenrol = case_when(q9 <3 ~ 0,
+                                q9 >2 ~1)
+  )
 
 
 # Write function for recoding likert scale ----------------------------------------
