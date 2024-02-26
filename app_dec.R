@@ -44,7 +44,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       radioButtons("demo", "Select demographic of interest", choices = demo_list),
-      radioButtons("ind_var", "Select independent variable", choices = c(ind_vars, "high_cfa", "high_fim", "high_fim_vals"))
+      radioButtons("ind_var", "Select independent variable", choices = c(ind_vars, "high_cfa", "high_fim_vals"))
     ),
     
     # Show a plot of the generated distribution
