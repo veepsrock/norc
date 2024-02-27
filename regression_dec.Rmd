@@ -179,3 +179,19 @@ Signif: income
 glm <- glm(q9d ~ income4_l, data = df, family = "binomial")
 tab_model(glm)
 ```
+
+## Responses across 9a, 9b, 9c, and 9d
+
+Most individuals are either interested in all of these programs, or none. 
+
+```{r program interest}
+
+response_table <- ftable(df$q9a, df$q9b, df$q9c, df$q9d)
+
+response_df <- as.data.frame(response_table)
+
+colnames(response_df) <- c("nutrition counseling", "medically tailored meals", "medically tailored groceries", "produce prescription programs")
+
+view(response_df)
+```
+
