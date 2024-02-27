@@ -29,7 +29,10 @@ library(sjPlot)
 Signif: asian origin, age, coo
 
 ```{r q1a}
-glm <- glm(q1a ~ relevel(factor(asianorigin_l), ref = 1) + coo_l + age4_l, data = df, family = "binomial")
+glm <-
+  glm(q1a ~ relevel(factor(asianorigin_l), ref = 1) + coo_l + age4_l,
+      data = df,
+      family = "binomial")
 tab_model(glm)
 ```
 
@@ -38,7 +41,12 @@ tab_model(glm)
 Signif: asian origin, age, lang_athome, internet, income 
 
 ```{r q1e}
-glm <- glm(q1e ~ relevel(factor(asianorigin_l), ref = 1) + lang_athome_l + age4_l + internet_l + income4_l, data = df, family = "binomial")
+glm <-
+  glm(
+    q1e ~ relevel(factor(asianorigin_l), ref = 1) + lang_athome_l + age4_l + internet_l + income4_l,
+    data = df,
+    family = "binomial"
+  )
 tab_model(glm)
 ```
 ## Q1B I trust my doctor, or other health professionals, for information on healthy eating 
@@ -57,7 +65,8 @@ Asian origin is not significant
 Signif: lang, coo
 
 ```{r q1c}
-glm <- glm(q1c ~ lang_athome_l + coo_l, data = df, family = "binomial")
+glm <-
+  glm(q1c ~ lang_athome_l + coo_l, data = df, family = "binomial")
 tab_model(glm)
 ```
 
@@ -67,7 +76,10 @@ Asian origin is not significant
 Signif: internet, lang
 
 ```{r q6}
-glm <- glm(q6 ~ lang_athome_l + internet_l, data = df, family = "binomial")
+glm <-
+  glm(q6 ~ lang_athome_l + internet_l,
+      data = df,
+      family = "binomial")
 tab_model(glm)
 ```
 
@@ -77,7 +89,10 @@ Asian origin is not significant
 Signif: income, internet, age 
 
 ```{r q7a}
-glm <- glm(q7a ~ income4_l + internet_l + age4_l, data = df, family = "binomial")
+glm <-
+  glm(q7a ~ income4_l + internet_l + age4_l,
+      data = df,
+      family = "binomial")
 tab_model(glm)
 ```
 
@@ -91,7 +106,10 @@ Asian origin is not significant
 Signif: income, lang, age 
 
 ```{r q7c}
-glm <- glm(q7c ~ lang_athome_l + income4_l + age4_l, data = df, family = "binomial")
+glm <-
+  glm(q7c ~ lang_athome_l + income4_l + age4_l,
+      data = df,
+      family = "binomial")
 tab_model(glm)
 ```
 
@@ -110,7 +128,12 @@ tab_model(glm)
 Signif: asian origin, income, coo, age
 
 ```{r q7e}
-glm <- glm(q7e ~ relevel(factor(asianorigin_l), ref = 1) + coo_l + age4_l + income4_l, data = df, family = "binomial")
+glm <-
+  glm(
+    q7e ~ relevel(factor(asianorigin_l), ref = 2) + coo_l + age4_l + income4_l,
+    data = df,
+    family = "binomial"
+  )
 tab_model(glm)
 ```
 
@@ -180,18 +203,48 @@ glm <- glm(q9d ~ income4_l, data = df, family = "binomial")
 tab_model(glm)
 ```
 
+--------------------------------------------------------------------------------
 ## Responses across 9a, 9b, 9c, and 9d
 
 Most individuals are either interested in all of these programs, or none. 
 
 ```{r program interest}
-
 response_table <- ftable(df$q9a, df$q9b, df$q9c, df$q9d)
 
 response_df <- as.data.frame(response_table)
 
-colnames(response_df) <- c("nutrition counseling", "medically tailored meals", "medically tailored groceries", "produce prescription programs")
+colnames(response_df) <-
+  c(
+    "nutrition counseling",
+    "medically tailored meals",
+    "medically tailored groceries",
+    "produce prescription programs"
+  )
 
 view(response_df)
 ```
 
+--------------------------------------------------------------------------------
+
+## Cultural Affinity and alignment with FIM values 
+
+There is a significant relationship between high_cfa and high_fim_vals, where individuals who have high cfa are 2.74 times as likely to have high_fim_vals
+
+```{r fim/cfa}
+glm <- glm(high_fim_vals ~ high_cfa, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## Cultural Affinity and demographics 
+
+```{r cfa and demographics}
+glm <- glm(high_cfa ~ coo_l + lang_athome_l + relevel(factor(asianorigin_l), ref = 2) + income4_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+## FIM Values and demogrphics 
+
+```{r fim and demographics}
+glm <- glm(high_fim_vals ~ coo_l + lang_athome_l + relevel(factor(asianorigin_l), ref = 2) + income4_l, data = df, family = "binomial")
+tab_model(glm)
+```
