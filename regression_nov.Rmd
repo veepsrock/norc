@@ -231,14 +231,14 @@ tab_model(glm)
 ```
 
 ```{r reference snap_elig}
-glm <- glm(snap_elig ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+glm <- glm(snap_elig ~ relevel(factor(asianorigin_l), ref = 2) + income4_l + region4_l, data = df, family = "binomial")
 tab_model(glm)
 ```
 
 ## Snap enrollment and fs/ns
 
 ```{r enrol and fs}
-glm <- glm(low_fs ~ snap_enrol + relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l, data = df, family = "binomial")
+glm <- glm(low_fs ~ snap_enrol + relevel(factor(asianorigin_l), ref = 2) + income4_l + region4_l, data = df, family = "binomial")
 tab_model(glm)
 ```
 

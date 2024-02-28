@@ -231,7 +231,12 @@ view(response_df)
 There is a significant relationship between high_cfa and high_fim_vals, where individuals who have high cfa are 2.74 times as likely to have high_fim_vals
 
 ```{r fim/cfa}
-glm <- glm(high_fim_vals ~ high_cfa, data = df, family = "binomial")
+glm <- glm(high_fim_vals ~ high_cfa + relevel(factor(asianorigin_l), ref = 2) + income4_l + lang_athome_l + coo_l, data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r cfa/fim}
+glm <- glm(high_cfa ~ high_fim_vals + relevel(factor(asianorigin_l), ref = 2) + income4_l + lang_athome_l + coo_l, data = df, family = "binomial")
 tab_model(glm)
 ```
 
