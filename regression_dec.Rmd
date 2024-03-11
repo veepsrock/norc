@@ -30,7 +30,7 @@ Signif: asian origin, age, coo
 
 ```{r q1a}
 glm <-
-  glm(q1a ~ relevel(factor(asianorigin_l), ref = 1) + coo_l + age4_l,
+  glm(q1a ~ relevel(factor(asianorigin_l), ref = 2) + coo_l + age4_l,
       data = df,
       family = "binomial")
 tab_model(glm)
