@@ -1,0 +1,47 @@
+---
+title: "R-shinylive-demo"
+format: 
+  html: 
+    grid:
+      body-width: 1400px
+    resources: 
+      - shinylive-sw.js
+filters:
+  - shinylive
+---
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 1400
+library(shiny)
+
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("Relationship between demographic group and food security"),
+    titlePanel(h3("22% of the AANHPI population face low food security and 20% face low nutrition security.")),
+    titlePanel(h3("Of those who face low food security, 60% also face low nutrition security.")),
+    p("There is a significant result between food security and asian origin, income, region, SNAP access, and language at home."),
+    p("There is a significant result between nutrition security and asian origin, income, SNAP access, language at home, and age."),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+          radioButtons("demo", "Select demographic of interest", choices = c("test")),
+          radioButtons("ind_var", "Select independent variable", choices = c("food security" = "fs", "nutrition security" = "ns", "hard_to_get", "expensive","lack_of_choices","hard_to_reach","lack_of_transport"))
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+          h3("Weighted breakdown by demographic group")
+        )
+    )
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui,server)
+
+```
