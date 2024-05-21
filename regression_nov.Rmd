@@ -165,7 +165,7 @@ tab_model(glm)
 ## Comparing asianorigin
 
 ```{r asianorigin reference}
-glm <- glm(low_fs ~ relevel(factor(asianorigin_l), ref = 1) + income4_l + region4_l + lang_athome_l + snap, data = df, family = "binomial")
+glm <- glm(low_fs ~ relevel(factor(asianorigin_l), ref = 2) + income4_l + region4_l + lang_athome_l, data = df, family = "binomial")
 tab_model(glm)
 ```
 
@@ -289,5 +289,10 @@ tab_model(glm)
 
 ```{r q10 elig}
 glm <- glm(snap_elig ~ relevel(factor(q10), ref = 1), data = df, family = "binomial")
+tab_model(glm)
+```
+
+```{r test}
+glm <- glm(low_fs ~ housing, data=df, family="binomial")
 tab_model(glm)
 ```
